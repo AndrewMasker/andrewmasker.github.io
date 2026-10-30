@@ -7,7 +7,7 @@ subtitle: andrewimasker@gmail.com. 717-251-0163.
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: snowboard.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>15960 Cumberland Hwy</p>
