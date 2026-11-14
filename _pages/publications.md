@@ -35,7 +35,7 @@ nav_order: 3
 <div class="publications">
 
 <h1>Journal Papers</h1>
-{% bibliography %}
+{% bibliography --file papers --group_by none %}
 
 <h1>Conference Papers and Posters</h1>
 {% bibliography --file presentations --group_by none %}
