@@ -97,7 +97,7 @@ $$
 0 = \int \left(|\nabla v_x|^2 + |\nabla v_y|^2 \right) \mathrm{d}A.
 $$
 
-One may use some combination of additional terms to get a better-behaved result. Interestingly, unlike many ill-posed problems, it is actually quite easy to *see* the ill-posed nature of this one through the aperture problem, shown in Fig. 5. Observing the motion at just a point (or, in this case, through an aperture with a repeating pattern) is not enough to deduce the actual underlying motion.
+One may use some combination of additional terms to get a better-behaved result. Interestingly, unlike many ill-posed problems, it is actually quite easy to _see_ the ill-posed nature of this one through the aperture problem, shown in Fig. 5. Observing the motion at just a point (or, in this case, through an aperture with a repeating pattern) is not enough to deduce the actual underlying motion.
 
 <div class="row justify-content-sm-center">
     <div class="col-sm-5 mt-3 mt-md-0">
