@@ -50,7 +50,7 @@ CC is widely used given its mathematical simplicity, robustness, and ability to 
 The other main method is optical flow (OF), in which it is assumed that the total intensity (pixel brightness) is conserved when image one is advected by the flow field into image two. If we think of the discrete images as continuous fields in space and time, that statement of intensity conservation can be written formally as
 
 $$
-I(\mathbf{x} , t) = I\left(\mathbf{x} + \int_t^{t + \Delta t} \mathbf{v}(\mathbf{x} , t) \delta t, \ t + \Delta t\right).
+I(\mathbf{x} , t) = I\left(\mathbf{x} + \int_t^{t + \Delta t} \mathbf{v}\left(\mathbf{x}(\tau) , \tau\right) \mathrm{d}\tau, \ t + \Delta t\right).
 $$
 
 <div class="row justify-content-sm-center">
@@ -65,10 +65,10 @@ $$
 A nonlinear inverse problem such as this has traditionally been very difficult to solve. As such, a first-order Taylor series approximation of the right side can be taken to get
 
 $$
-I(\mathbf{x} , t) = I(\mathbf{x} , t) + \frac{\partial I}{\partial \mathbf{x}} \cdot \mathbf{v} + \frac{\partial I}{\partial t}.
+I(\mathbf{x} , t) \approx I(\mathbf{x} , t) + \frac{\partial I}{\partial \mathbf{x}} \cdot \mathbf{v} \, \Delta t + \frac{\partial I}{\partial t} \, \Delta t.
 $$
 
-After cancelling like terms and rewriting in terms of components rather than vectors, we get the linear approximation
+After cancelling like terms, dividing by $$\Delta t$$, and rewriting in terms of components rather than vectors, we get the linear approximation
 
 $$
 \frac{\partial I}{\partial t} = -\left(v_x \frac{\partial I}{\partial x} + v_y \frac{\partial I}{\partial y}\right),
@@ -163,9 +163,9 @@ We can then get the actual image two in the array basis by sampling image two at
 $$
 I_\mathcal{A}\left(t + \Delta t\right) =
 \begin{bmatrix}
-    \mathbf{x}_0\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_0\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_0\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_0\left(\tau\right) , \tau\right), t\right) \\
-    \mathbf{x}_1\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_1\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_1\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_1\left(\tau\right) , \tau\right), t\right) \\
-    \mathbf{x}_2\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_2\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_2\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_2\left(\tau\right) , \tau\right), t\right) \\
+    \mathbf{x}_0\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_0\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_0\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_0\left(\tau\right) , \tau\right) \mathrm{d}\tau, t + \Delta t\right) \\
+    \mathbf{x}_1\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_1\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_1\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_1\left(\tau\right) , \tau\right) \mathrm{d}\tau, t + \Delta t\right) \\
+    \mathbf{x}_2\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_2\left(\tau\right) , \tau\right) \mathrm{d}\tau & I\left(\mathbf{x}_2\left(t\right) + \int_t^{t + \Delta t}\mathbf{v}\left(\mathbf{x}_2\left(\tau\right) , \tau\right) \mathrm{d}\tau, t + \Delta t\right) \\
     \vdots & \vdots
 \end{bmatrix}.
 $$
