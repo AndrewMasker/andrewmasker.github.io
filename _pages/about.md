@@ -31,7 +31,7 @@ I am currently a PhD student in Mechanical Engineering and Applied Mechanics on 
 
 I enjoy working on engineering and research projects related to manufacturing, computer architecture, machine learning, and more. Currently I am working on a metal 3d printer and a virtual machine written in the scripting language bash.
 
-I grew up in Chambersburg and Shippensburg, Pennsylvania where I went to the Career Magnet School. I got my bachelor's degree in Mechanical Engineering from the Pennsylvania State University Schreyer Honors College where I did my thesis on Neural Optical Flow in Dr. Samuel Grauer's Lab. Currently, I am a PhD student on LOA in the ScalAR Lab with Dr. Ani Hsieh at the University of Pennsylvania. 
+I grew up in Chambersburg and Shippensburg, Pennsylvania where I went to the Career Magnet School. I got my bachelor's degree in Mechanical Engineering from the Pennsylvania State University Schreyer Honors College where I did my thesis on Neural Optical Flow in Dr. Samuel Grauer's Lab. Currently, I am a PhD student on LOA in the ScalAR Lab with Dr. Ani Hsieh at the University of Pennsylvania.
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](https://www.reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
 
