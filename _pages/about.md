@@ -27,11 +27,11 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am currently a PhD student in Mechanical Engineering and Applied Mechanics on LOA from the University of Pennsylvania.
+I am currently a PhD student in Mechanical Engineering and Applied Mechanics on medical leave of absence from the University of Pennsylvania. Alongside the PhD, I am part of the way through a master's in Robotics.
 
 I enjoy working on engineering and research projects related to manufacturing, computer architecture, machine learning, and more. Currently I am working on a metal 3d printer and a virtual machine written in the scripting language bash.
 
-I grew up in Chambersburg and Shippensburg, Pennsylvania where I went to the Career Magnet School. I got my bachelor's degree in Mechanical Engineering from the Pennsylvania State University Schreyer Honors College where I did my thesis on Neural Optical Flow in Dr. Samuel Grauer's Lab. Currently, I am a PhD student on LOA in the ScalAR Lab with Dr. Ani Hsieh at the University of Pennsylvania.
+I grew up in Chambersburg and Shippensburg, Pennsylvania where I went to the Career Magnet School. I got my bachelor's degree in Mechanical Engineering from the Pennsylvania State University Schreyer Honors College where I did my thesis on Neural Optical Flow in Dr. Samuel Grauer's Lab. Currently, I am a PhD student in the ScalAR Lab with Dr. Ani Hsieh at the University of Pennsylvania, currently on medical leave of absence.
 
 <!-- Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](https://www.reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
 
