@@ -5,7 +5,7 @@ description: learning the hydrodynamics of underwater robotic arms with knowledg
 img: assets/img/projects/academic/uw_arm_knode/comparison.png
 importance: 1
 category: academic
-related_publications: true
+related_publications: false
 ---
 
 Note: This project is unfinished due to my medical leave of absence from the University of Pennsylvania. The code is on GitHub <a href="https://github.com/AndrewMasker/KNODE_UW_ARM">here</a>, although it is also in an unfinished state. This page gives an overview of the problem and the mathematics behind the methods I compared, rather than a finished set of results.
@@ -16,7 +16,7 @@ JAX, Equinox, Diffrax, MuJoCo, MJX, system identification, dynamical systems mod
 
 ### Background
 
-Underwater robotic arms are useful across much of the underwater economy, including aquaculture, exploration, polymetallic nodule harvesting, and infrastructure construction and maintenance. Their use is hampered by the unmodeled dynamics of the surrounding fluid, which often leads to overly stiff controllers that are power hungry on energy-limited mobile platforms. A controller that does not know how the water will push back on the arm has to fight it with high gains instead of anticipating it.
+Underwater robotic arms are useful across much of the underwater economy, including aquaculture, exploration, polymetallic nodule harvesting, and infrastructure construction and maintenance. Their use is hampered by the unmodeled dynamics of the surrounding fluid, which often leads to overly stiff controllers that are power hungry on energy-limited mobile platforms. A controller that does not know what effect the water will have must compensate with high gains instead of anticipating and factoring in the impact.
 
 Unfortunately, the effects of the surrounding fluid cannot be solved for directly with a computational method such as a finite element or finite volume simulation. Aside from the fact that real-time simulation would be extremely costly and likely infeasible on a power-limited machine, the lack of a well-defined domain, boundary conditions, and knowledge of the local motion of the fluid at any point in time would make a useful forward simulation impossible.
 
@@ -72,7 +72,13 @@ the goal is to find a model $$\hat{\mathbf{f}}$$ such that integrating $$\dot{\m
 
 ### Sparse Identification of Nonlinear Dynamics (SINDy)
 
-<a href="https://www.pnas.org/doi/10.1073/pnas.1517384113">SINDy</a> assumes that the dynamics can be written as a sparse linear combination of terms drawn from a user-defined dictionary of candidate functions. Stacking $$m$$ snapshots of the state and input into matrices $$\mathbf{X}$$ and $$\mathbf{U}$$, along with the corresponding time derivatives $$\dot{\mathbf{X}}$$, one builds a library matrix
+<a href="https://www.pnas.org/doi/10.1073/pnas.1517384113">SINDy</a> assumes that the dynamics can be written as a sparse linear combination of terms drawn from a user-defined dictionary of candidate functions; for example
+
+$$
+\phi = \{1 , \mathbf{x} , \mathbf{u} , \mathbf{x}^2 , \cdots , \sin(\mathbf{x}) , \cos(\mathbf{x}) , \cdots \}.
+$$
+
+Stacking $$m$$ snapshots of the state and input into matrices $$\mathbf{X}$$ and $$\mathbf{U}$$, along with the corresponding time derivatives $$\dot{\mathbf{X}}$$, one builds a library matrix from the dictionary functions
 
 $$
 \boldsymbol{\Theta}(\mathbf{X}, \mathbf{U}) =
@@ -81,7 +87,7 @@ $$
 \end{bmatrix} \in \mathbb{R}^{m \times p},
 $$
 
-where each column is one candidate function evaluated at every snapshot (e.g., $$\mathbf{X}^{P_2}$$ contains all quadratic monomials of the state). The dynamics are then modeled as
+where each column is one candidate function evaluated at every snapshot. The dynamics are then modeled as
 
 $$
 \dot{\mathbf{X}} \approx \boldsymbol{\Theta}(\mathbf{X}, \mathbf{U}) \, \boldsymbol{\Xi},
@@ -145,9 +151,9 @@ $$
 \frac{\mathrm{d}\mathcal{L}}{\mathrm{d}\theta} = \int_{t_0}^{t_K} \mathbf{a}(t)^\top \frac{\partial \mathbf{f}_\theta}{\partial \theta} \, \mathrm{d}t,
 $$
 
-with $$\mathbf{a}$$ receiving a jump of $$\partial \mathcal{L} / \partial \hat{\mathbf{x}}(t_k)$$ at each observation time. This requires only constant memory in the length of the trajectory, at the cost of an extra backward solve. Both approaches only need vector-Jacobian products of $$\mathbf{f}_\theta$$, which automatic differentiation provides for free.
+with $$\mathbf{a}$$ receiving a jump of $$\partial \mathcal{L} / \partial \hat{\mathbf{x}}(t_k)$$ at each observation time. This requires only constant memory in the length of the trajectory, at the cost of an extra backward solve. Both approaches only need vector-Jacobian products of $$\mathbf{f}_\theta$$, which automatic differentiation provides for free. In practice, the discretize-then-optimize method is faster and does not accumulate errors in the gradient from the backwards in time ode solve, thus making it a better choice as long as memory is not limited.
 
-NODEs share many of the benefits of SINDy and GPs: they are general, they do not require the user to supply a dictionary or kernel, and they are well suited to the dense time series that can be gathered from robotic arms. They do, however, struggle with high-dimensional systems when the data is sparse in the state space, which it almost always is for something like a robotic arm. For the Panda, the network takes a 21-dimensional input (14 states and 7 torques), and even a large set of trajectories only covers a set of thin curves through that space. A plain NODE also has to learn the entire rigid-body dynamics from scratch, including the inverse mass matrix and gravity terms that we already know very well, in addition to the fluid effects that we actually care about. There is an implicit tension between the expressivity of the network and overfitting, which is compounded by the juxtaposition of sparse samples and complex, highly nonlinear dynamics.
+NODEs share many of the benefits of SINDy and GPs while reducing some of the difficulties with both; they are general, they do not require the user to supply a dictionary or kernel, and they are well suited to the dense time series that can be gathered from robotic arms. They do, however, struggle with high-dimensional systems when the data is sparse in the state space, which it almost always is for something like a robotic arm. For the Panda, the network takes a 21-dimensional input (14 states and 7 torques), and even a large set of trajectories only covers a set of thin curves through that space. A plain NODE also has to learn the entire rigid-body dynamics from scratch, including the inverse mass matrix and gravity terms that we already know very well, in addition to the fluid effects that we actually care about. There is also an implicit tension between the expressivity of the network and overfitting, which is compounded by the juxtaposition of sparse samples and complex, highly nonlinear dynamics.
 
 ### Knowledge-Based Neural ODEs (KNODE)
 
@@ -157,10 +163,16 @@ $$
 \dot{\mathbf{x}} = \mathcal{M}_c\left( \tilde{\mathbf{f}}(\mathbf{x}, \mathbf{u}), \ \mathbf{f}_\theta(\mathbf{x}, \mathbf{u}) \right),
 $$
 
-where $$\tilde{\mathbf{f}}$$ is the nominal model. The most common choice, used for example in <a href="https://arxiv.org/abs/2109.04821">KNODE-MPC</a> for quadrotors, is a simple additive residual,
+where $$\tilde{\mathbf{f}}$$ is the nominal model. The most common choice, used for example in <a href="https://arxiv.org/abs/2109.04821">KNODE-MPC</a> for quadrotors, is either a simple additive residual,
 
 $$
-\dot{\mathbf{x}} = \tilde{\mathbf{f}}(\mathbf{x}, \mathbf{u}) + \mathbf{f}_\theta(\mathbf{x}, \mathbf{u}).
+\dot{\mathbf{x}} = \tilde{\mathbf{f}}(\mathbf{x}, \mathbf{u}) + \mathbf{f}_\theta(\mathbf{x}, \mathbf{u})
+$$
+
+or a linear combination with learned matrices
+
+$$
+\dot{\mathbf{x}} = M_\mathrm{N} \ \tilde{\mathbf{f}}(\mathbf{x}, \mathbf{u}) + M_\mathrm{L} \ \mathbf{f}_\theta(\mathbf{x}, \mathbf{u}).
 $$
 
 For an underwater arm, the nominal model is simply the rigid-body dynamics of the arm in air, which we know very well from its geometry and mass properties. The network is then only responsible for the discrepancy between the nominal model and reality, which is dominated by the hydrodynamic effects. Since the fluid enters the manipulator equation as a generalized force, it is also natural to place the residual at the torque level rather than directly on $$\dot{\mathbf{x}}$$,
@@ -179,7 +191,7 @@ Training a KNODE works exactly like training a NODE, except that gradients now h
 
 ### Results
 
-Fig. 1 shows a comparison of the end point of a trajectory for the ground truth, KNODE, Fourier basis SINDy, a GP, and the nominal model. The nominal model, which neglects the fluid entirely, drifts the furthest from the ground truth, and the SINDy and GP models land somewhere in between. The KNODE prediction nearly overlaps the ground truth.
+Fig. 1 shows a comparison of the end point of a trajectory for the ground truth, KNODE, Fourier basis SINDy, a GP, and the nominal model. In this synthetic case, the ground truth dynamics include Mujoco's fluid model, while the nominal model includes just the arm dynamics. The two traditional techniques are only trained on the residual dynamics from the ground truth versus the nominal, so to keep the comparison fair. The nominal model, which neglects the fluid entirely, drifts the furthest from the ground truth, and the SINDy and GP models land somewhere in between. The KNODE prediction nearly overlaps the ground truth.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -193,7 +205,7 @@ Fig. 1 shows a comparison of the end point of a trajectory for the ground truth,
     Fig. 1. Comparison of the end point of a trajectory (left) and the same end point from above (right) for the ground truth (white), KNODE (green), Fourier basis SINDy (orange), GP (blue), and the nominal model (red).
 </div>
 
-The natural next step, and the original motivation for the project, was to use the learned model inside a model-based controller such as model predictive control, following the approach of KNODE-MPC, so that the controller can anticipate the fluid forces rather than overpowering them with stiff gains. Unfortunately, due to my medical leave of absence, I was unable to continue work on this project.
+The natural next step, and the original motivation for the project, was to use the learned model inside a model-based controller such as model predictive control, following the approach of KNODE-MPC, so that the controller can anticipate the fluid forces rather than overpowering them with stiff gains. There was also hope to work with a more complete fluid simulation and with real world data, along with modifying the technique to allow for a stateful fluid. Unfortunately, due to my medical leave of absence, I was unable to continue work on this project.
 
 ### Implementation
 
