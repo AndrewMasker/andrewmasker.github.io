@@ -22,15 +22,15 @@ I learned a ton about computer architecture, virtual machines, bash, and the way
 
 Bashputer is an in-terminal, 64 bit, register-based, RISC virtual machine written in bash. It has a von Neumann architecture with memory-mapped IO. The computer is organized as a modular system with components using the same message passing system used to load and store data. The components are then piped together within the Computer.sh script, which uses a general system that allows easy extension of the set of components.
 
-There are eight components types that are used within the computer. 
+There are eight components types that are used within the computer.
 
 <div style="margin-left:2rem" markdown="1">
 
 **CPU**: The CPU is in charge of performing actions based on the current instruction. It uses a multi-level state based approach to track the current step in the given instruction, for example fetching a word (8 bytes) requires some clock cycles to initialize itself, then eight to load each byte, then some to clean up and increment the process counter. It has 256 general purpose registers, such that a byte is used to index them.
 
-**Bus Interconnect**: The bus interconnect acts as a buffer between the CPU and all of the components it can interact with. Since the computer uses memory-mapped IO, an address must be decoded and sent to the correct component by finding where an address maps to, then removing the offset to make the address local to the component, and finally retransmitting the message specifically pointed to that component. 
+**Bus Interconnect**: The bus interconnect acts as a buffer between the CPU and all of the components it can interact with. Since the computer uses memory-mapped IO, an address must be decoded and sent to the correct component by finding where an address maps to, then removing the offset to make the address local to the component, and finally retransmitting the message specifically pointed to that component.
 
-**Clock**: The clock tells clockable components when to perform a step. 
+**Clock**: The clock tells clockable components when to perform a step.
 
 **Keyboard**: The keyboard takes input from the user and exposes it to the CPU through some memory-mapped registers. There are registers for whether key presses are waiting and what the current key in the buffer is, along with an additional register used for clearing the current key buffer.
 
@@ -48,9 +48,20 @@ There are eight components types that are used within the computer.
 
 The computer has a variable instruction length ISA in which an instruction is encoded as a single opcode byte followed by zero or more arguments. For example, the instruction for adding register 0 to register 1 and placing the result in register 2 is 0x02 0x00 0x01 0x02 where the leading 0x02 represents the ADD instruction, and the following bytes are interpreted as the registers.
 
-Given that the computer is implemented in Bash, many of the arithmetic choices are simply inherited from Bash arithmetic. Some of these choices are: no floating point numbers, registers are signed integers in arithmetic, 
+Given that the computer is implemented in Bash, many of the arithmetic choices are simply inherited from Bash arithmetic. Some of these choices are: no floating point numbers, registers are signed integers in arithmetic,
 
 In total there are 66 opcodes, though many are permutations of a basic concept, like loading or storing. These are fit into several categories of opcodes, as listed below.
+
+Instructions that come in several widths use a suffix for the size: **B** for a byte (1 byte), **Q** for a quarter (2 bytes), **H** for a half (4 bytes), and **W** for a word (8 bytes). These are written together below, so LD[B/Q/H/W] stands for LDB, LDQ, LDH, and LDW. Any opcode that isn't assigned an instruction halts the CPU.
+
+#### Control
+
+<div style="margin-left:2rem" markdown="1">
+
+**NOP**: NOP - Does nothing. \\
+**HLT**: HLT - Halts the CPU, which stops the computer. \\
+
+</div>
 
 #### Arithmetic
 
@@ -74,7 +85,7 @@ In total there are 66 opcodes, though many are permutations of a basic concept, 
 **AND**: AND rA, rB, rC - Performs bitwise and on rA and rB and puts the result in rC. \\
 **OR**: OR rA, rB, rC - Performs bitwise or on rA and rB and puts the result in rC. \\
 **XOR**: XOR rA, rB, rC - Performs bitwise xor on rA and rB and puts the result in rC. \\
-**NOT**: XOR rA, rB - Performs logical not on rA and puts the result in rB. \\
+**NOT**: NOT rA, rB - Performs bitwise not on rA and puts the result in rB. \\
 **LSR**: LSR rA, rB, rC - Logically shifts rA by rB to the right and puts the result in rC. \\
 **ASR**: ASR rA, rB, rC - Shifts rA by rB to the right, keeping the sign the same, and puts the result in rC. \\
 **SHL**: SHL rA, rB, rC - Shifts rA by rB to the left and puts the result in rC. \\
@@ -86,6 +97,90 @@ In total there are 66 opcodes, though many are permutations of a basic concept, 
 <div style="margin-left:2rem" markdown="1">
 
 **EQ**: EQ rA, rB, rC - If rA equals rB then rC is set to one, else to zero. \\
+**NEQ**: NEQ rA, rB, rC - If rA does not equal rB then rC is set to one, else to zero. \\
+**LT**: LT rA, rB, rC - If rA is less than rB (unsigned) then rC is set to one, else to zero. \\
+**LTS**: LTS rA, rB, rC - If rA is less than rB (signed) then rC is set to one, else to zero. \\
+**LE**: LE rA, rB, rC - If rA is less than or equal to rB (unsigned) then rC is set to one, else to zero. \\
+**LES**: LES rA, rB, rC - If rA is less than or equal to rB (signed) then rC is set to one, else to zero. \\
+**GT**: GT rA, rB, rC - If rA is greater than rB (unsigned) then rC is set to one, else to zero. \\
+**GTS**: GTS rA, rB, rC - If rA is greater than rB (signed) then rC is set to one, else to zero. \\
+**GE**: GE rA, rB, rC - If rA is greater than or equal to rB (unsigned) then rC is set to one, else to zero. \\
+**GES**: GES rA, rB, rC - If rA is greater than or equal to rB (signed) then rC is set to one, else to zero. \\
+
+</div>
+
+#### Loads and Stores
+
+<div style="margin-left:2rem" markdown="1">
+
+**LD[B/Q/H/W]**: LD[B/Q/H/W] rA, rB - Loads the value of the given size from the memory address in rA, zero-extends it, and puts it in rB. \\
+**ST[B/Q/H/W]**: ST[B/Q/H/W] rA, rB - Stores the low bytes of rA, of the given size, to the memory address in rB. \\
+
+</div>
+
+#### Immediates
+
+<div style="margin-left:2rem" markdown="1">
+
+**LI[B/Q/H/W]**: LI[B/Q/H/W] rA, imm - Loads an immediate value of the given size, encoded directly in the instruction, into rA (zero-extended). \\
+
+</div>
+
+#### Jumps and Branches
+
+All jump, branch, and call targets are relative to the jump origin register JO, so the CPU actually jumps to the target plus JO.
+
+<div style="margin-left:2rem" markdown="1">
+
+**JMP**: JMP rA - Jumps to the address in rA. \\
+**BZ**: BZ rA, rB - If rA is zero, jumps to the address in rB. \\
+**BNZ**: BNZ rA, rB - If rA is not zero, jumps to the address in rB. \\
+**JMPI**: JMPI imm64 - Jumps to the 64 bit immediate address. \\
+**BZI**: BZI rA, imm64 - If rA is zero, jumps to the 64 bit immediate address. \\
+**BNZI**: BNZI rA, imm64 - If rA is not zero, jumps to the 64 bit immediate address. \\
+
+</div>
+
+#### Stack
+
+<div style="margin-left:2rem" markdown="1">
+
+**PSH[B/Q/H/W]**: PSH[B/Q/H/W] rA - Pushes the low bytes of rA, of the given size, onto the stack and moves the stack pointer up. \\
+**POP[B/Q/H/W]**: POP[B/Q/H/W] rA - Pops a value of the given size off of the stack into rA (zero-extended) and moves the stack pointer down. \\
+**SSP**: SSP rA - Sets the stack pointer to the value in rA. \\
+**SSPI**: SSPI imm64 - Sets the stack pointer to the 64 bit immediate value. \\
+**XSP**: XSP rA - Swaps the stack pointer with the value in rA. \\
+
+</div>
+
+#### Calls
+
+<div style="margin-left:2rem" markdown="1">
+
+**CAL**: CAL rA - Pushes the return address onto the stack, then jumps to the address in rA. \\
+**CALI**: CALI imm64 - Pushes the return address onto the stack, then jumps to the 64 bit immediate address. \\
+**RET**: RET - Pops the return address off of the stack and jumps to it. \\
+
+</div>
+
+#### Register Moves
+
+<div style="margin-left:2rem" markdown="1">
+
+**MOV**: MOV rA, rB - Copies the value in rA into rB. \\
+**PC**: PC rA - Puts the address of this PC instruction into rA. \\
+**SP**: SP rA - Puts the stack pointer into rA. \\
+**SJO**: SJO rA - Sets the jump origin to the value in rA. \\
+
+</div>
+
+#### Random Numbers
+
+<div style="margin-left:2rem" markdown="1">
+
+**RND**: RND rA - Puts the next pseudorandom value from the xorshift generator into rA. \\
+**SEED**: SEED rA - Seeds the random number generator with the value in rA. \\
+**ENT**: ENT rA - Puts a random value from the host machine into rA, which is useful as a seed. \\
 
 </div>
 
