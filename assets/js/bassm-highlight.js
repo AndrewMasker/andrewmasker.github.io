@@ -6,7 +6,7 @@
 // <pre><code class="language-bassm">, and this script colors them in the browser.
 // If Shiki or the grammar can't be loaded, the blocks stay as plain text.
 
-import { createHighlighter } from "https://esm.sh/shiki@4.6.0";
+import { createHighlighter, createJavaScriptRegexEngine } from "https://esm.sh/shiki@4.6.0";
 
 // Served by jsDelivr from the Bashputer repo, so the site picks up grammar changes.
 // jsDelivr caches branch files, so a change can take a while to appear.
@@ -31,6 +31,11 @@ async function highlightBassm() {
     // The grammar's own name is "Bashputer Assembly", so give it a short id here
     langs: [{ ...grammar, name: "bassm" }],
     themes: Object.values(THEMES),
+    // Shiki's default regex engine (Oniguruma) is WebAssembly, which the site's
+    // Content-Security-Policy blocks: compiling WebAssembly needs 'wasm-unsafe-eval' in
+    // script-src. The JavaScript engine needs no WebAssembly and gives identical output
+    // for the Bassm grammar.
+    engine: createJavaScriptRegexEngine(),
   });
 
   for (const code of blocks) {
@@ -46,6 +51,7 @@ async function highlightBassm() {
   }
 }
 
-// On failure the blocks stay as plain text. (Terser's drop_console setting strips this
-// warning from the deployed file, so it only shows when serving the source unminified.)
-highlightBassm().catch((error) => console.warn("Bassm highlighting unavailable, showing plain text:", error));
+// On failure the blocks stay as plain text. The site's Terser config (drop_console) strips
+// console calls from the deployed file, so report the error with reportError instead: it
+// shows up in the browser console as an uncaught error.
+highlightBassm().catch((error) => reportError(error));
