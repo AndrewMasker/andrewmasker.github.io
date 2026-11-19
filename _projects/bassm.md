@@ -47,7 +47,7 @@ The output is a cartridge, which is just a plain-text file. Each line holds a st
 
 This program prints `Hello!` and waits for a key press. All of the screen and keyboard registers are memory-mapped, so drawing a character is just a matter of storing the column into the cursor register and the character into the cell register. Nothing appears on screen until the program writes to `BLIT`.
 
-```text
+```bassm
 def SCREEN    = 64000
 def CX        = ( $SCREEN + 2 )
 def CELL      = ( $SCREEN + 14 )
@@ -99,7 +99,7 @@ A few things to notice: the destination register always comes last, labels are d
 
 A label names the address of the next statement, and it can be used before it is defined. Scopes let the same label name be used in different parts of a program. Inside a scope, `:.name` searches the current scope first, then each enclosing scope, then the global labels:
 
-```text
+```bassm
 cali :countdown
 hlt
 
@@ -118,7 +118,7 @@ From outside the scope, the loop above is `:countdown.loop`.
 
 An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so `( :end - :start )` gives the size of a block of code.
 
-```text
+```bassm
 lib r1 , ( 2 + 3 * 4 )
 liw r2 , ( ( 1 << 40 ) | 0xFF )
 lib r3 , ( 10 > 5 ? 1 : 0 )
@@ -126,7 +126,7 @@ lib r3 , ( 10 > 5 ? 1 : 0 )
 
 `def` defines a substitution, and `$name` replaces it with its text. This is mostly used to give names to memory-mapped registers and to the general-purpose registers a program uses, which makes a big difference when there are 256 of them:
 
-```text
+```bassm
 def SCREEN = 64000
 def FILL   = ( $SCREEN + 16 )
 def r_addr = r6
@@ -140,7 +140,7 @@ A substitution with `@` parameters is a macro, and arguments are passed by name 
 
 That turned out to be enough to build structured control flow on top of raw branches. Below is the `when` macro from my Snake program, along with the keyboard handler that uses it. Passing `is=eq` drops an `eq` comparison into the macro body, and `do=` takes the block of code to run:
 
-```text
+```bassm
 # when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
 def when =
 {
@@ -176,7 +176,7 @@ Snake defines a whole family of these: `if`, `when`, and `while`, each with a va
 
 `!label_origin` makes all later label references relative to the current address. Combined with the `pc` instruction, which reads the address of the current instruction, and `sjo`, which sets the jump origin that the CPU adds to every jump, branch, and call target, this produces code that runs correctly wherever it is loaded:
 
-```text
+```bassm
 !label_origin
 pc r1                   # r1 = the address of this instruction
 sjo r1                  # add r1 to every jump, branch, and call
@@ -208,3 +208,15 @@ The source for every included program is in `Assembler/Examples/`. I wrote Snake
 ### Implementation
 
 The assembler is written in <a href="https://www.gnu.org/software/bash/manual/bash.html">Bash</a>, and the syntax highlighting is a VS Code TextMate grammar. I wrote the assembler, and I developed the VS Code extension from drafts and a walkthrough by Claude. The repo's README lists exactly which files used AI and how.
+
+<style>
+  /* Bassm colors come from assets/js/bassm-highlight.js and follow the site's light/dark theme */
+  .language-bassm span {
+    color: var(--shiki-light);
+  }
+  html[data-theme="dark"] .language-bassm span {
+    color: var(--shiki-dark);
+  }
+</style>
+
+<script type="module" src="{{ '/assets/js/bassm-highlight.js' | relative_url }}"></script>
