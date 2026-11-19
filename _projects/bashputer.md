@@ -2,7 +2,7 @@
 layout: page
 title: Bashputer
 description: a virtual machine written in the scripting language Bash
-img: assets/img/projects/personal/bashputer/Maze.png
+img: assets/img/projects/personal/bashputer/Maze.gif
 importance: 1
 category: personal
 related_publications: false
@@ -103,13 +103,13 @@ There are eight components types that are used within the computer.
 
 The computer has a variable instruction length ISA in which an instruction is encoded as a single opcode byte followed by zero or more arguments. For example, the instruction for adding register 0 to register 1 and placing the result in register 2 is 0x02 0x00 0x01 0x02 where the leading 0x02 represents the ADD instruction, and the following bytes are interpreted as the registers.
 
-Given that the computer is implemented in Bash, many of the arithmetic choices are simply inherited from Bash arithmetic. Some of these choices are: no floating point numbers, registers are signed integers in arithmetic,
+Given that the computer is implemented in Bash, many of the arithmetic choices are simply inherited from Bash arithmetic. The two big of these are no floating point numbers and registers are signed integers in arithmetic.
 
 In total there are 66 opcodes, though many are permutations of a basic concept, like loading or storing. These are fit into several categories of opcodes, as listed below.
 
 Instructions that come in several widths use a suffix for the size: **B** for a byte (1 byte), **Q** for a quarter (2 bytes), **H** for a half (4 bytes), and **W** for a word (8 bytes). These are written together below, so LD[B/Q/H/W] stands for LDB, LDQ, LDH, and LDW. Any opcode that isn't assigned an instruction halts the CPU.
 
-#### Control
+**Control**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -119,7 +119,7 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 </div>
 
-#### Arithmetic
+**Arithmetic**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -135,7 +135,7 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 </div>
 
-#### Bitwise Operations
+**Bitwise Operations**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -150,7 +150,7 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 </div>
 
-#### Comparisons
+**Comparisons**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -168,26 +168,18 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 </div>
 
-#### Loads and Stores
+**Loads and Stores**
 
 <div style="margin-left:2rem" markdown="1">
 
 | **LD[B/Q/H/W]** | : | LD[B/Q/H/W] rA, rB | - | Loads the value of the given size from the memory address in rA, zero-extends it, and puts it in rB. |
+| **LI[B/Q/H/W]** | : | LI[B/Q/H/W] rA, imm | - | Loads an immediate value of the given size, encoded directly in the instruction, into rA (zero-extended). |
 | **ST[B/Q/H/W]** | : | ST[B/Q/H/W] rA, rB | - | Stores the low bytes of rA, of the given size, to the memory address in rB. |
 {: .isa-table}
 
 </div>
 
-#### Immediates
-
-<div style="margin-left:2rem" markdown="1">
-
-| **LI[B/Q/H/W]** | : | LI[B/Q/H/W] rA, imm | - | Loads an immediate value of the given size, encoded directly in the instruction, into rA (zero-extended). |
-{: .isa-table}
-
-</div>
-
-#### Jumps and Branches
+**Jumps and Branches**
 
 All jump, branch, and call targets are relative to the jump origin register JO, so the CPU actually jumps to the target plus JO.
 
@@ -203,7 +195,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 </div>
 
-#### Stack
+**Stack**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -216,7 +208,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 </div>
 
-#### Calls
+**Calls**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -227,7 +219,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 </div>
 
-#### Register Moves
+**Register Moves**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -239,7 +231,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 </div>
 
-#### Random Numbers
+**Random Numbers**
 
 <div style="margin-left:2rem" markdown="1">
 
@@ -249,6 +241,14 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 {: .isa-table}
 
 </div>
+
+### Results
+
+Bashputer is a surprisingly capable machine given that it is written entirely in Bash. That isn't to say that it is very fast, in fact it is quite slow, but it does have a rich set of features that allow for some very interesting and fun programs.
+
+Below you can see two versions of snake written for the Bashputer in <a href="">Bassm</a> (the assembly language for Bashputer). The left version was entirely written by me. It is the result of a few rounds of optimization to get it to a decently fast speed that isn't agonizing to play. The right is a version of my code that has been optimized by Claude that inlines most stuff rather than using calls and returns, removes most immediate mode loads and jumps, and works with a different erase and grow strategy over the ring buffer I implemented. This all speeds up the game to the point that is actually decently challenging, showing that a fast program can be achieved with proper optimization. 
+
+You can actually play the FastSnake game in a browser based VM online <a href="https://andrewmasker.github.io/webvm/">here</a>, although it is very slow to run and start in the browser. You have to be patient on the moves; each key press takes effect one or two frames after pressed. Use wasd to move, q to quit. If you quit, eventually the console will be returned to you, from which you can run other cartridges using the computer.sh script if you are comfortable in a terminal.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
