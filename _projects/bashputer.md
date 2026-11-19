@@ -324,10 +324,13 @@ Below you can see two versions of Snake written for the Bashputer in <a href="{%
     Fig. 1. The game Snake running on the Bashputer. Left is the version I wrote by hand, and right is a version of my code that was optimized by Claude.
 </div>
 
-The repo also includes a Fibonacci printer that I wrote, along with a few programs written by Claude to exercise the machine: a Towers of Hanoi solver, a tour of the assembly language's features, two-player Pong (plus a faster rebuild of it in the style of FastSnake), and an endless rainbow maze generator, shown below.
+The repo also includes a Fibonacci printer that I wrote, along with a few programs written by Claude to exercise the machine: a Towers of Hanoi solver, a tour of the assembly language's features, two-player Pong (plus a faster rebuild of it in the style of FastSnake), and an endless rainbow maze generator. The FastPong program and Maze program are shown below.
 
 <div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.043 1 0%;">
+        {% include video.liquid path="assets/img/projects/personal/bashputer/FastPong.webm" class="img-fluid rounded" autoplay=true muted=true loop=true %}
+    </div>
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.777 1 0%;">
         {% include video.liquid path="assets/img/projects/personal/bashputer/Maze.webm" class="img-fluid rounded" autoplay=true muted=true loop=true %}
     </div>
 </div>
