@@ -18,15 +18,15 @@ Honestly, this is kind of one of those projects that seem very silly at first gl
 
 I learned a ton about computer architecture, virtual machines, bash, and the way GNU/linux works under the hood.
 
-### Bashputer
+### General
 
-Bashputer is an in-terminal 64 bit RISC virtual machine written in bash. It has a von Neumann architecture with memory-mapped IO. The computer is organized as a modular system with components using the same message passing system used to load and store data. The components are then piped together within the Computer.sh script, which uses a general system that allows easy extension of the set of components.
+Bashputer is an in-terminal, 64 bit, register-based, RISC virtual machine written in bash. It has a von Neumann architecture with memory-mapped IO. The computer is organized as a modular system with components using the same message passing system used to load and store data. The components are then piped together within the Computer.sh script, which uses a general system that allows easy extension of the set of components.
 
 There are eight components types that are used within the computer. 
 
-<ul>
+<div style="margin-left:2rem" markdown="1">
 
-**CPU**: the CPU is in charge of performing actions based on the current instruction. It uses a multi-level state based approach to track the current step in the given instruction, for example fetching a word (8 bytes) requires some clock cycles to initialize itself, then eight to load each byte, then some to clean up and increment the process counter. It has 256 general purpose registers, such that a byte is used to index them.
+**CPU**: The CPU is in charge of performing actions based on the current instruction. It uses a multi-level state based approach to track the current step in the given instruction, for example fetching a word (8 bytes) requires some clock cycles to initialize itself, then eight to load each byte, then some to clean up and increment the process counter. It has 256 general purpose registers, such that a byte is used to index them.
 
 **Bus Interconnect**: The bus interconnect acts as a buffer between the CPU and all of the components it can interact with. Since the computer uses memory-mapped IO, an address must be decoded and sent to the correct component by finding where an address maps to, then removing the offset to make the address local to the component, and finally retransmitting the message specifically pointed to that component. 
 
@@ -42,7 +42,52 @@ There are eight components types that are used within the computer.
 
 **Timer**: The timer gives out millisecond level ticks of real world time. It is not that useful for this VM, as it is written in Bash and incredibly slow, which means that it isn't really used for any sort of frame rate stuff.
 
-</ul>
+</div>
+
+### Instruction Set Architecture
+
+The computer has a variable instruction length ISA in which an instruction is encoded as a single opcode byte followed by zero or more arguments. For example, the instruction for adding register 0 to register 1 and placing the result in register 2 is 0x02 0x00 0x01 0x02 where the leading 0x02 represents the ADD instruction, and the following bytes are interpreted as the registers.
+
+Given that the computer is implemented in Bash, many of the arithmetic choices are simply inherited from Bash arithmetic. Some of these choices are: no floating point numbers, registers are signed integers in arithmetic, 
+
+In total there are 66 opcodes, though many are permutations of a basic concept, like loading or storing. These are fit into several categories of opcodes, as listed below.
+
+#### Arithmetic
+
+<div style="margin-left:2rem" markdown="1">
+
+**ADD**: ADD rA, rB, rC - Performs rA plus rB and puts the result in rC. \\
+**SUB**: SUB rA, rB, rC - Performs rA minus rB and puts the result in rC. \\
+**INC**: INC rA - Increments the value in rA. \\
+**DEC**: DEC rA - Decrements the value in rA. \\
+**NEG**: NEG rA, rB - Puts the negative of rA into rB. \\
+**MUL**: MUL rA, rB, rC - Performs rA times rB and puts the result in rC. \\
+**DIV**: DIV rA, rB, rC - Performs rA divided by rB and puts the result in rC (rounds towards zero). \\
+**REM**: REM rA, rB, rC - Performs rA divided rB and puts the remainder in rC. \\
+
+</div>
+
+#### Bitwise Operations
+
+<div style="margin-left:2rem" markdown="1">
+
+**AND**: AND rA, rB, rC - Performs bitwise and on rA and rB and puts the result in rC. \\
+**OR**: OR rA, rB, rC - Performs bitwise or on rA and rB and puts the result in rC. \\
+**XOR**: XOR rA, rB, rC - Performs bitwise xor on rA and rB and puts the result in rC. \\
+**NOT**: XOR rA, rB - Performs logical not on rA and puts the result in rB. \\
+**LSR**: LSR rA, rB, rC - Logically shifts rA by rB to the right and puts the result in rC. \\
+**ASR**: ASR rA, rB, rC - Shifts rA by rB to the right, keeping the sign the same, and puts the result in rC. \\
+**SHL**: SHL rA, rB, rC - Shifts rA by rB to the left and puts the result in rC. \\
+
+</div>
+
+#### Comparisons
+
+<div style="margin-left:2rem" markdown="1">
+
+**EQ**: EQ rA, rB, rC - If rA equals rB then rC is set to one, else to zero. \\
+
+</div>
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
