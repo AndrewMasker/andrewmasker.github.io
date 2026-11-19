@@ -304,47 +304,13 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 ### Bassm: The Assembly Language
 
-Programs for the Bashputer are written in Bassm (`.bassm` files) and built into cartridges by an assembler that is, of course, also written in Bash. The assembler runs in three stages. A preprocessor strips comments and expands substitutions and macros, a processor assigns addresses, resolves labels, and evaluates compile-time arithmetic, and a hexer encodes each statement as bytes. The output is a cartridge, which is just a plain-text file of addresses and hex bytes that gets copied into ROM when the computer starts. There is also a VS Code extension for Bassm syntax highlighting.
-
-The macro system turned out to be powerful enough to build structured control flow on top of raw branches. Below is the `when` macro from my Snake program, along with the keyboard handler that uses it. `def` creates a substitution, and parameters starting with `@` turn it into a macro. Arguments can even be mnemonics, so `is=eq` drops an `eq` comparison into the macro body. `!scope` creates local labels, which are referred to as `:.name`, and a macro that defines labels is automatically wrapped in its own scope, so it can be used as many times as needed.
-
-```text
-# when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
-def when =
-{
-    @is @reg , @val , $r_cond
-    bzi $r_cond , :.endif
-    !scope
-        @do
-    !endscope
-    endif:
-}
-
-def key_body = {
-    ldb $r_kb_data_addr , $r_kb_data
-    $when[reg=$r_kb_data , is=eq , val=$r_w , do={$change_dir[todir=$r_up , dx=$r_zero , dy=$r_neg_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_a , do={$change_dir[todir=$r_left , dx=$r_neg_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_s , do={$change_dir[todir=$r_down , dx=$r_zero , dy=$r_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_d , do={$change_dir[todir=$r_right , dx=$r_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_q , do={$peek[addr=$KB_CLEAR , reg=$r_unsafe] ; hlt}]
-
-    ldb $r_kb_status_addr , $r_kb_status
-}
-
-def handle_keys = {
-    ldb $r_kb_status_addr , $r_kb_status
-    $while[reg=$r_kb_status , is=eq , val=$r_one , do=$key_body]
-    keys_done:
-}
-```
-
-The full language is documented in the <a href="https://github.com/AndrewMasker/Bashputer/blob/master/docs/assembly-language.md">assembly language guide</a> in the repo.
+Programs for the Bashputer are written in Bassm, an assembly language with macros, scoped labels, and compile-time arithmetic. Its assembler is, of course, also written in Bash, and it turns `.bassm` source files into cartridges: plain-text files of addresses and hex bytes that get copied into ROM when the computer starts. Bassm has its own project page <a href="{% link _projects/bassm.md %}">here</a>, which covers the language, the assembler, and how its macros are used to build structured control flow out of raw branches.
 
 ### Results
 
 Bashputer is a surprisingly capable machine given that it is written entirely in Bash. That isn't to say it is fast (it is actually quite slow), but it has a rich enough set of features to allow for some interesting and fun programs.
 
-Below you can see two versions of Snake written for the Bashputer in Bassm. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes targets the cost model described above: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
+Below you can see two versions of Snake written for the Bashputer in <a href="{% link _projects/bassm.md %}">Bassm</a>. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes targets the cost model described above: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
