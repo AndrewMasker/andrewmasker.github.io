@@ -8,6 +8,61 @@ category: personal
 related_publications: false
 ---
 
+<style>
+  /* Opcode lists: borderless tables so the colons and dashes line up */
+  .isa-table {
+    width: 100%;
+    table-layout: fixed; /* same column positions in every section */
+    margin-bottom: 1rem;
+  }
+  .isa-table td {
+    border: none;
+    background: none;
+    padding: 0 0.35rem;
+    vertical-align: top;
+  }
+  .isa-table td:nth-child(1) {
+    width: 8rem;
+    white-space: nowrap;
+  }
+  .isa-table td:nth-child(3) {
+    width: 10.5rem;
+    white-space: nowrap;
+  }
+  /* the ":" and "-" columns hug their neighbours */
+  .isa-table td:nth-child(2),
+  .isa-table td:nth-child(4) {
+    width: 0.6rem;
+    padding: 0;
+  }
+  /* phones: "NAME : SYNTAX" on one line, description indented underneath */
+  @media (max-width: 576px) {
+    .isa-table,
+    .isa-table tbody,
+    .isa-table tr {
+      display: block;
+      width: auto;
+    }
+    .isa-table tr {
+      margin-bottom: 0.5rem;
+    }
+    .isa-table td {
+      display: inline;
+      padding: 0;
+    }
+    .isa-table td:nth-child(2) {
+      padding-right: 0.3rem;
+    }
+    .isa-table td:nth-child(4) {
+      display: none;
+    }
+    .isa-table td:nth-child(5) {
+      display: block;
+      padding-left: 1.5rem;
+    }
+  }
+</style>
+
 Note: If you want to know more about how Bashputer works, take a look at the repo <a href="https://github.com/AndrewMasker/Bashputer">here</a>. The Bashputer is within the `src` folder.
 
 ### Introduction / Motivation
@@ -58,8 +113,9 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**NOP**: NOP - Does nothing. \\
-**HLT**: HLT - Halts the CPU, which stops the computer. \\
+| **NOP** | : | NOP | - | Does nothing. |
+| **HLT** | : | HLT | - | Halts the CPU, which stops the computer. |
+{: .isa-table}
 
 </div>
 
@@ -67,14 +123,15 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**ADD**: ADD rA, rB, rC - Performs rA plus rB and puts the result in rC. \\
-**SUB**: SUB rA, rB, rC - Performs rA minus rB and puts the result in rC. \\
-**INC**: INC rA - Increments the value in rA. \\
-**DEC**: DEC rA - Decrements the value in rA. \\
-**NEG**: NEG rA, rB - Puts the negative of rA into rB. \\
-**MUL**: MUL rA, rB, rC - Performs rA times rB and puts the result in rC. \\
-**DIV**: DIV rA, rB, rC - Performs rA divided by rB and puts the result in rC (rounds towards zero). \\
-**REM**: REM rA, rB, rC - Performs rA divided rB and puts the remainder in rC. \\
+| **ADD** | : | ADD rA, rB, rC | - | Performs rA plus rB and puts the result in rC. |
+| **SUB** | : | SUB rA, rB, rC | - | Performs rA minus rB and puts the result in rC. |
+| **INC** | : | INC rA | - | Increments the value in rA. |
+| **DEC** | : | DEC rA | - | Decrements the value in rA. |
+| **NEG** | : | NEG rA, rB | - | Puts the negative of rA into rB. |
+| **MUL** | : | MUL rA, rB, rC | - | Performs rA times rB and puts the result in rC. |
+| **DIV** | : | DIV rA, rB, rC | - | Performs rA divided by rB and puts the result in rC (rounds towards zero). |
+| **REM** | : | REM rA, rB, rC | - | Performs rA divided rB and puts the remainder in rC. |
+{: .isa-table}
 
 </div>
 
@@ -82,13 +139,14 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**AND**: AND rA, rB, rC - Performs bitwise and on rA and rB and puts the result in rC. \\
-**OR**: OR rA, rB, rC - Performs bitwise or on rA and rB and puts the result in rC. \\
-**XOR**: XOR rA, rB, rC - Performs bitwise xor on rA and rB and puts the result in rC. \\
-**NOT**: NOT rA, rB - Performs bitwise not on rA and puts the result in rB. \\
-**LSR**: LSR rA, rB, rC - Logically shifts rA by rB to the right and puts the result in rC. \\
-**ASR**: ASR rA, rB, rC - Shifts rA by rB to the right, keeping the sign the same, and puts the result in rC. \\
-**SHL**: SHL rA, rB, rC - Shifts rA by rB to the left and puts the result in rC. \\
+| **AND** | : | AND rA, rB, rC | - | Performs bitwise and on rA and rB and puts the result in rC. |
+| **OR** | : | OR rA, rB, rC | - | Performs bitwise or on rA and rB and puts the result in rC. |
+| **XOR** | : | XOR rA, rB, rC | - | Performs bitwise xor on rA and rB and puts the result in rC. |
+| **NOT** | : | NOT rA, rB | - | Performs bitwise not on rA and puts the result in rB. |
+| **LSR** | : | LSR rA, rB, rC | - | Logically shifts rA by rB to the right and puts the result in rC. |
+| **ASR** | : | ASR rA, rB, rC | - | Shifts rA by rB to the right, keeping the sign the same, and puts the result in rC. |
+| **SHL** | : | SHL rA, rB, rC | - | Shifts rA by rB to the left and puts the result in rC. |
+{: .isa-table}
 
 </div>
 
@@ -96,16 +154,17 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**EQ**: EQ rA, rB, rC - If rA equals rB then rC is set to one, else to zero. \\
-**NEQ**: NEQ rA, rB, rC - If rA does not equal rB then rC is set to one, else to zero. \\
-**LT**: LT rA, rB, rC - If rA is less than rB (unsigned) then rC is set to one, else to zero. \\
-**LTS**: LTS rA, rB, rC - If rA is less than rB (signed) then rC is set to one, else to zero. \\
-**LE**: LE rA, rB, rC - If rA is less than or equal to rB (unsigned) then rC is set to one, else to zero. \\
-**LES**: LES rA, rB, rC - If rA is less than or equal to rB (signed) then rC is set to one, else to zero. \\
-**GT**: GT rA, rB, rC - If rA is greater than rB (unsigned) then rC is set to one, else to zero. \\
-**GTS**: GTS rA, rB, rC - If rA is greater than rB (signed) then rC is set to one, else to zero. \\
-**GE**: GE rA, rB, rC - If rA is greater than or equal to rB (unsigned) then rC is set to one, else to zero. \\
-**GES**: GES rA, rB, rC - If rA is greater than or equal to rB (signed) then rC is set to one, else to zero. \\
+| **EQ** | : | EQ rA, rB, rC | - | If rA equals rB then rC is set to one, else to zero. |
+| **NEQ** | : | NEQ rA, rB, rC | - | If rA does not equal rB then rC is set to one, else to zero. |
+| **LT** | : | LT rA, rB, rC | - | If rA is less than rB (unsigned) then rC is set to one, else to zero. |
+| **LTS** | : | LTS rA, rB, rC | - | If rA is less than rB (signed) then rC is set to one, else to zero. |
+| **LE** | : | LE rA, rB, rC | - | If rA is less than or equal to rB (unsigned) then rC is set to one, else to zero. |
+| **LES** | : | LES rA, rB, rC | - | If rA is less than or equal to rB (signed) then rC is set to one, else to zero. |
+| **GT** | : | GT rA, rB, rC | - | If rA is greater than rB (unsigned) then rC is set to one, else to zero. |
+| **GTS** | : | GTS rA, rB, rC | - | If rA is greater than rB (signed) then rC is set to one, else to zero. |
+| **GE** | : | GE rA, rB, rC | - | If rA is greater than or equal to rB (unsigned) then rC is set to one, else to zero. |
+| **GES** | : | GES rA, rB, rC | - | If rA is greater than or equal to rB (signed) then rC is set to one, else to zero. |
+{: .isa-table}
 
 </div>
 
@@ -113,8 +172,9 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**LD[B/Q/H/W]**: LD[B/Q/H/W] rA, rB - Loads the value of the given size from the memory address in rA, zero-extends it, and puts it in rB. \\
-**ST[B/Q/H/W]**: ST[B/Q/H/W] rA, rB - Stores the low bytes of rA, of the given size, to the memory address in rB. \\
+| **LD[B/Q/H/W]** | : | LD[B/Q/H/W] rA, rB | - | Loads the value of the given size from the memory address in rA, zero-extends it, and puts it in rB. |
+| **ST[B/Q/H/W]** | : | ST[B/Q/H/W] rA, rB | - | Stores the low bytes of rA, of the given size, to the memory address in rB. |
+{: .isa-table}
 
 </div>
 
@@ -122,7 +182,8 @@ Instructions that come in several widths use a suffix for the size: **B** for a 
 
 <div style="margin-left:2rem" markdown="1">
 
-**LI[B/Q/H/W]**: LI[B/Q/H/W] rA, imm - Loads an immediate value of the given size, encoded directly in the instruction, into rA (zero-extended). \\
+| **LI[B/Q/H/W]** | : | LI[B/Q/H/W] rA, imm | - | Loads an immediate value of the given size, encoded directly in the instruction, into rA (zero-extended). |
+{: .isa-table}
 
 </div>
 
@@ -132,12 +193,13 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 <div style="margin-left:2rem" markdown="1">
 
-**JMP**: JMP rA - Jumps to the address in rA. \\
-**BZ**: BZ rA, rB - If rA is zero, jumps to the address in rB. \\
-**BNZ**: BNZ rA, rB - If rA is not zero, jumps to the address in rB. \\
-**JMPI**: JMPI imm64 - Jumps to the 64 bit immediate address. \\
-**BZI**: BZI rA, imm64 - If rA is zero, jumps to the 64 bit immediate address. \\
-**BNZI**: BNZI rA, imm64 - If rA is not zero, jumps to the 64 bit immediate address. \\
+| **JMP** | : | JMP rA | - | Jumps to the address in rA. |
+| **BZ** | : | BZ rA, rB | - | If rA is zero, jumps to the address in rB. |
+| **BNZ** | : | BNZ rA, rB | - | If rA is not zero, jumps to the address in rB. |
+| **JMPI** | : | JMPI imm64 | - | Jumps to the 64 bit immediate address. |
+| **BZI** | : | BZI rA, imm64 | - | If rA is zero, jumps to the 64 bit immediate address. |
+| **BNZI** | : | BNZI rA, imm64 | - | If rA is not zero, jumps to the 64 bit immediate address. |
+{: .isa-table}
 
 </div>
 
@@ -145,11 +207,12 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 <div style="margin-left:2rem" markdown="1">
 
-**PSH[B/Q/H/W]**: PSH[B/Q/H/W] rA - Pushes the low bytes of rA, of the given size, onto the stack and moves the stack pointer up. \\
-**POP[B/Q/H/W]**: POP[B/Q/H/W] rA - Pops a value of the given size off of the stack into rA (zero-extended) and moves the stack pointer down. \\
-**SSP**: SSP rA - Sets the stack pointer to the value in rA. \\
-**SSPI**: SSPI imm64 - Sets the stack pointer to the 64 bit immediate value. \\
-**XSP**: XSP rA - Swaps the stack pointer with the value in rA. \\
+| **PSH[B/Q/H/W]** | : | PSH[B/Q/H/W] rA | - | Pushes the low bytes of rA, of the given size, onto the stack and moves the stack pointer up. |
+| **POP[B/Q/H/W]** | : | POP[B/Q/H/W] rA | - | Pops a value of the given size off of the stack into rA (zero-extended) and moves the stack pointer down. |
+| **SSP** | : | SSP rA | - | Sets the stack pointer to the value in rA. |
+| **SSPI** | : | SSPI imm64 | - | Sets the stack pointer to the 64 bit immediate value. |
+| **XSP** | : | XSP rA | - | Swaps the stack pointer with the value in rA. |
+{: .isa-table}
 
 </div>
 
@@ -157,9 +220,10 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 <div style="margin-left:2rem" markdown="1">
 
-**CAL**: CAL rA - Pushes the return address onto the stack, then jumps to the address in rA. \\
-**CALI**: CALI imm64 - Pushes the return address onto the stack, then jumps to the 64 bit immediate address. \\
-**RET**: RET - Pops the return address off of the stack and jumps to it. \\
+| **CAL** | : | CAL rA | - | Pushes the return address onto the stack, then jumps to the address in rA. |
+| **CALI** | : | CALI imm64 | - | Pushes the return address onto the stack, then jumps to the 64 bit immediate address. |
+| **RET** | : | RET | - | Pops the return address off of the stack and jumps to it. |
+{: .isa-table}
 
 </div>
 
@@ -167,10 +231,11 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 <div style="margin-left:2rem" markdown="1">
 
-**MOV**: MOV rA, rB - Copies the value in rA into rB. \\
-**PC**: PC rA - Puts the address of this PC instruction into rA. \\
-**SP**: SP rA - Puts the stack pointer into rA. \\
-**SJO**: SJO rA - Sets the jump origin to the value in rA. \\
+| **MOV** | : | MOV rA, rB | - | Copies the value in rA into rB. |
+| **PC** | : | PC rA | - | Puts the address of this PC instruction into rA. |
+| **SP** | : | SP rA | - | Puts the stack pointer into rA. |
+| **SJO** | : | SJO rA | - | Sets the jump origin to the value in rA. |
+{: .isa-table}
 
 </div>
 
@@ -178,9 +243,10 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 
 <div style="margin-left:2rem" markdown="1">
 
-**RND**: RND rA - Puts the next pseudorandom value from the xorshift generator into rA. \\
-**SEED**: SEED rA - Seeds the random number generator with the value in rA. \\
-**ENT**: ENT rA - Puts a random value from the host machine into rA, which is useful as a seed. \\
+| **RND** | : | RND rA | - | Puts the next pseudorandom value from the xorshift generator into rA. |
+| **SEED** | : | SEED rA | - | Seeds the random number generator with the value in rA. |
+| **ENT** | : | ENT rA | - | Puts a random value from the host machine into rA, which is useful as a seed. |
+{: .isa-table}
 
 </div>
 
