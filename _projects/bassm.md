@@ -102,7 +102,7 @@ A few things to notice: the destination register always comes last, labels are d
 
 ### Labels and Scopes
 
-A label names the address of the next statement, and it can be used before it is defined. Scopes let the same label name be used in different parts of a program. Inside a scope, `:.name` searches the current scope first, then each enclosing scope, then the global labels:
+A label names the address of the next statement, and it can be used before it is defined. Scopes let the same label name be used in different parts of a program. Inside a scope, `:.name`{:.language-bassm} searches the current scope first, then each enclosing scope, then the global labels:
 
 ```bassm
 cali :countdown
@@ -117,11 +117,11 @@ hlt
 !endscope
 ```
 
-From outside the scope, the loop above is `:countdown.loop`.
+From outside the scope, the loop above is `:countdown.loop`{:.language-bassm}.
 
 ### Compile-Time Arithmetic and Substitutions
 
-An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so `( :end - :start )` gives the size of a block of code.
+An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so `( :end - :start )`{:.language-bassm} gives the size of a block of code.
 
 ```bassm
 lib r1 , ( 2 + 3 * 4 )
@@ -129,7 +129,7 @@ liw r2 , ( ( 1 << 40 ) | 0xFF )
 lib r3 , ( 10 > 5 ? 1 : 0 )
 ```
 
-`def name` defines a substitution called `name`, and `$name` is replaced by whatever text is assigned to that substitution. This is used to give names to memory-mapped registers and to the general-purpose registers a program uses, along with defining constants:
+`def name`{:.language-bassm} defines a substitution called `name`{:.language-bassm}, and `$name`{:.language-bassm} is replaced by whatever text is assigned to that substitution. This is used to give names to memory-mapped registers and to the general-purpose registers a program uses, along with defining constants:
 
 ```bassm
 def SCREEN = 64000
@@ -146,9 +146,9 @@ lib $r_width , $width
 
 ### Macros
 
-A substitution with `@` parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, including whole blocks of statements, and it can even be a mnemonic, so one macro can work with several different instructions. A macro that defines labels is automatically wrapped in its own scope, so it can be used as many times as needed.
+A substitution with `@`{:.language-bassm} parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, including whole blocks of statements, and it can even be a mnemonic, so one macro can work with several different instructions. A macro that defines labels is automatically wrapped in its own scope, so it can be used as many times as needed.
 
-That turned out to be enough to build structured control flow on top of raw branches. Below is the `when` macro from my Snake program, along with the keyboard handler that uses it. Passing `is=eq` drops an `eq` comparison into the macro body, and `do=` takes the block of code to run:
+That turned out to be enough to build structured control flow on top of raw branches. Below is the `when`{:.language-bassm} macro from my Snake program, along with the keyboard handler that uses it. Passing `is=eq`{:.language-bassm} drops an `eq`{:.language-bassm} comparison into the macro body, and `do=`{:.language-bassm} takes the block of code to run:
 
 ```bassm
 # when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
@@ -180,7 +180,7 @@ def handle_keys = {
 }
 ```
 
-Snake defines a whole family of these: `if`, `when`, and `while`, each with a variant that compares against an immediate value, plus a `fori` counting loop.
+Snake defines a whole family of these: `if`{:.language-bassm}, `when`{:.language-bassm}, and `while`{:.language-bassm}, each with a variant that compares against an immediate value, plus a `fori`{:.language-bassm} counting loop.
 
 ### Position-Independent Code
 
