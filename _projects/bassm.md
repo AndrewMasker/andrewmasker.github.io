@@ -2,7 +2,7 @@
 layout: page
 title: Bassm
 description: an assembly language and assembler for the Bashputer, also written in Bash
-img: assets/img/projects/personal/bassm/thumbnail.png
+img: assets/img/projects/personal/bassm/bassm_thumbnail.png
 importance: 2
 category: personal
 related_publications: false
