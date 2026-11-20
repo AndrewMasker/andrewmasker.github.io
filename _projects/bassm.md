@@ -229,6 +229,11 @@ The assembler is written in <a href="https://www.gnu.org/software/bash/manual/ba
   code.language-bassm {
     color: #bbbebf;
   }
+  /* Inline Bassm, written as `code`{:.language-bassm}, gets the same dark background so the
+     theme's colors stay readable against the site's light-mode inline code background */
+  :not(pre) > code.language-bassm {
+    background-color: #121314;
+  }
 </style>
 
 <script type="module" src="{{ '/assets/js/bassm-highlight.js' | relative_url }}"></script>
