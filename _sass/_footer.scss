@@ -1,0 +1,42 @@
+/*******************************************************************************
+ * Footer styles
+ *
+ * Local override of al_folio_core's _sass/_footer.scss.
+ * The upstream fixed footer uses an inverted color scheme (dark bar in light
+ * mode, light bar in dark mode). This version uses the page's own background,
+ * text, and theme colors instead, so the footer blends in with whichever theme
+ * is active, with a thin divider line to separate it from the content.
+ ******************************************************************************/
+
+footer.fixed-bottom {
+  background-color: var(--global-bg-color);
+  border-top: 1px solid var(--global-divider-color);
+  font-size: 0.75rem;
+
+  .container {
+    color: var(--global-text-color-light);
+    padding-top: 9px;
+    padding-bottom: 8px;
+    text-align: center;
+  }
+
+  a {
+    color: var(--global-theme-color);
+
+    &:hover {
+      color: var(--global-hover-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+footer.sticky-bottom {
+  border-top: 1px solid var(--global-divider-color);
+  padding-top: 40px;
+  padding-bottom: 40px;
+  font-size: 0.9rem;
+
+  .container {
+    text-align: center;
+  }
+}
