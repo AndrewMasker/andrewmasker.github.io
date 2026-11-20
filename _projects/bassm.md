@@ -29,18 +29,23 @@ The assembler runs in three stages, each its own script:
 2. The **processor** assigns an address to every statement, resolves labels, and evaluates arithmetic.
 3. The **hexer** encodes each statement as bytes, using a table of opcodes and operand sizes.
 
-Running it with `-k` keeps the output of each stage, which is the quickest way to see what a macro actually expanded to.
+The following commands will assemble `MyProgram.bassm` and output the cartridge as `src/Cartridges/MyProgram`. Running it with `-k` keeps the output of each stage, which is the quickest way to see what a macro actually expanded to.
 
 ```bash
 bash Assembler/assembler.sh MyProgram.bassm -o src/Cartridges/MyProgram
-src/run.sh MyProgram
 ```
 
-The output is a cartridge, which is just a plain-text file. Each line holds a starting address followed by up to 16 bytes, and when the Bashputer starts, the cartridge is copied into ROM and execution begins at address 0:
+The output is a cartridge, which is just a named folder containing a plain-text file called `hex`. Each line holds a starting address followed by up to 16 bytes, and when the Bashputer starts, the cartridge is copied into ROM and execution begins at address 0:
 
 ```text
 0x0000000000000000 0x1F 0x2A 0x14 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x36 0x08 0x38 0x08 0x1F 0x1F
 0x0000000000000010 0x67 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x28 0x1F 0x1F 0x06 0x48 0x00 0x00 0x00
+```
+
+Run the computer with a cartridge to load as ROM with the following command.
+
+```bash
+src/run.sh MyProgram
 ```
 
 ### A First Program
@@ -124,7 +129,7 @@ liw r2 , ( ( 1 << 40 ) | 0xFF )
 lib r3 , ( 10 > 5 ? 1 : 0 )
 ```
 
-`def` defines a substitution, and `$name` replaces it with its text. This is mostly used to give names to memory-mapped registers and to the general-purpose registers a program uses, which makes a big difference when there are 256 of them:
+`def name` defines a substitution called `name`, and `$name` is replaced by whatever text is assigned to that substitution. This is used to give names to memory-mapped registers and to the general-purpose registers a program uses, along with defining constants:
 
 ```bassm
 def SCREEN = 64000
@@ -132,6 +137,11 @@ def FILL   = ( $SCREEN + 16 )
 def r_addr = r6
 
 liw $r_addr , $FILL
+
+def width = 15
+def r_width = r34
+
+lib $r_width , $width
 ```
 
 ### Macros

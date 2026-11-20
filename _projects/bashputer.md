@@ -117,7 +117,7 @@ Every hardware component of the computer is its own Bash process. The `computer.
 
 **The clock cycle.** Each pass through the main loop in `computer.sh` is one clock cycle. It waits for the clock, then tells the CPU to step and routes its messages until the CPU says it is done, then does the same for the loader. The CPU runs until it makes one bus access (a load or store of a single byte), so internal work such as an addition takes no extra cycles. As a result, the cost of an instruction is the number of bytes it occupies plus the number of bytes it reads or writes. This simple cost model ends up mattering a lot for how fast programs run, as you can see in the [results](#results).
 
-**A memory access.** Loading the byte `0x2A` from RAM at global address `0x5DC10` goes like this:
+**Memory access.** Loading the byte `0x2A` from RAM at global address `0x5DC10` goes like this:
 
 1. The CPU sends `load 0x000000000005DC10` to `computer.sh`, which forwards it to the bus interconnect.
 2. The bus sees that the address belongs to RAM, subtracts the start of RAM's range, and replies `ram load 0x0000000000000010`.
@@ -310,7 +310,7 @@ Programs for the Bashputer are written in Bassm, an assembly language with macro
 
 Bashputer is a surprisingly capable machine given that it is written entirely in Bash. That isn't to say it is fast (it is actually quite slow), but it has a rich enough set of features to allow for some interesting and fun programs.
 
-Below you can see two versions of Snake written for the Bashputer in <a href="{% link _projects/bassm.md %}">Bassm</a>. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes targets the cost model described above: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
+Below you can see two versions of Snake written for the Bashputer in <a href="{% link _projects/bassm.md %}">Bassm</a>. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes reduce the total number of clock cycles and bus accesses: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -354,4 +354,4 @@ Getting the Bashputer to run in WebVM took a couple of workarounds. The clock pa
 
 ### Implementation
 
-This project was implemented in <a href="https://www.gnu.org/software/bash/manual/bash.html">Bash</a>, with <a href="https://github.com/containers/bubblewrap">bubblewrap</a> for sandboxing. The computer and assembler are my own code. Some of the example programs, the FastSnake optimizations, and the repo's documentation were written with Claude, and the repo's README lists exactly which files used AI and how.
+This project was implemented in <a href="https://www.gnu.org/software/bash/manual/bash.html">Bash</a>, with <a href="https://github.com/containers/bubblewrap">bubblewrap</a> for sandboxing. The computer and assembler are my own code. Some of the example programs, the FastSnake optimizations, and the repo's documentation were written with Claude; the repo's README lists exactly which files used AI and how.
