@@ -18,7 +18,7 @@ Bassm is a fairly small language, but it has a few features that make it much mo
 
 - **Labels and scopes**, so the same label name can be reused in different parts of a program
 - **Compile-time arithmetic**, evaluated with Bash arithmetic, including on label addresses
-- **Substitutions and macros**, which are powerful enough to build structured control flow such as `if` and `while` out of raw branches
+- **Substitutions and macros**, which are powerful enough to build structured control flow such as `if`{:.language-bassm} and `while`{:.language-bassm} out of raw branches
 - **Label origins**, for writing code that runs correctly wherever it is loaded in memory
 
 ### The Assembler
@@ -50,7 +50,7 @@ src/run.sh MyProgram
 
 ### A First Program
 
-This program prints `Hello!` and waits for a key press. All of the screen and keyboard registers are memory-mapped, so drawing a character is just a matter of storing the column into the cursor register and the character into the cell register. Nothing appears on screen until the program writes to `BLIT`.
+This program prints `Hello!` and waits for a key press. All of the screen and keyboard registers are memory-mapped, so drawing a character is just a matter of storing the column into the cursor register and the character into the cell register. Nothing appears on screen until the program writes to `BLIT`{:.language-bassm}.
 
 ```bassm
 def SCREEN    = 64000
@@ -98,7 +98,7 @@ message:
 db 0x48 , 0x65 , 0x6C , 0x6C , 0x6F , 0x21 , 0      # "Hello!"
 ```
 
-A few things to notice: the destination register always comes last, labels are defined with a trailing colon and referenced with a leading one, and `db` places raw bytes in the program (there are no string literals). The instructions themselves are listed on the [Bashputer page]({% link _projects/bashputer.md %}#instruction-set-architecture).
+A few things to notice: the destination register always comes last, labels are defined with a trailing colon and referenced with a leading one, and `db`{:.language-bassm} places raw bytes in the program (there are no string literals). The instructions themselves are listed on the [Bashputer page]({% link _projects/bashputer.md %}#instruction-set-architecture).
 
 ### Labels and Scopes
 
@@ -184,7 +184,7 @@ Snake defines a whole family of these: `if`{:.language-bassm}, `when`{:.language
 
 ### Position-Independent Code
 
-`!label_origin` makes all later label references relative to the current address. Combined with the `pc` instruction, which reads the address of the current instruction, and `sjo`, which sets the jump origin that the CPU adds to every jump, branch, and call target, this produces code that runs correctly wherever it is loaded:
+`!label_origin`{:.language-bassm} makes all later label references relative to the current address. Combined with the `pc`{:.language-bassm} instruction, which reads the address of the current instruction, and `sjo`{:.language-bassm}, which sets the jump origin that the CPU adds to every jump, branch, and call target, this produces code that runs correctly wherever it is loaded:
 
 ```bassm
 !label_origin
@@ -199,7 +199,7 @@ Loads and stores still use absolute addresses, so data reached through a label n
 
 ### Writing Fast Code
 
-The Bashputer's clock advances once per bus access, so the cost of an instruction is the number of bytes it occupies plus the number of bytes it reads or writes. That makes some very different-looking code equivalent in speed, and some innocent-looking code very expensive. A `JMPI` costs 9 clock cycles because its 8-byte target has to be fetched, while a `JMP` to a register costs 2, and a `CALI` and `RET` pair costs 26. Macros make it easy to inline code instead of calling it, and to load branch targets into registers once and reuse them in hot loops.
+The Bashputer's clock advances once per bus access, so the cost of an instruction is the number of bytes it occupies plus the number of bytes it reads or writes. That makes some very different-looking code equivalent in speed, and some innocent-looking code very expensive. A `JMPI`{:.language-bassm} costs 9 clock cycles because its 8-byte target has to be fetched, while a `JMP`{:.language-bassm} to a register costs 2, and a `CALI`{:.language-bassm} and `RET`{:.language-bassm} pair costs 26. Macros make it easy to inline code instead of calling it, and to load branch targets into registers once and reuse them in hot loops.
 
 The FastSnake program is the result of applying those ideas to my Snake, and you can see the difference side by side on the [Bashputer page]({% link _projects/bashputer.md %}#results).
 
@@ -220,19 +220,26 @@ The source for every included program is in `Assembler/Examples/`. I wrote Snake
 The assembler is written in <a href="https://www.gnu.org/software/bash/manual/bash.html">Bash</a>, and the syntax highlighting is a VS Code TextMate grammar. I wrote the assembler, and I developed the VS Code extension from drafts and a walkthrough by Claude. The repo's README lists exactly which files used AI and how.
 
 <style>
-  /* Bassm blocks use VS Code's Dark 2026 theme (colored by assets/js/bassm-highlight.js) in
-     both site modes, so give them that theme's editor background and default text color.
-     These match editor.background / editor.foreground in assets/json/vscode-dark-2026.json. */
-  pre:has(> code.language-bassm) {
-    background-color: #121314;
-  }
+  /* Bassm code (fenced bassm blocks, and inline code tagged with the language-bassm class) is colored by
+     assets/js/bassm-highlight.js with VS Code's Light 2026 theme in light mode and Dark 2026
+     in dark mode. The background is transparent so it matches the page. */
+  pre:has(> code.language-bassm),
   code.language-bassm {
+    background-color: transparent;
+  }
+  /* Default text color: editor.foreground from assets/json/vscode-{light,dark}-2026.json.
+     It also keeps the text readable if the script can't load. */
+  code.language-bassm {
+    color: #202020;
+  }
+  html[data-theme="dark"] code.language-bassm {
     color: #bbbebf;
   }
-  /* Inline Bassm, written as `code`{:.language-bassm}, gets the same dark background so the
-     theme's colors stay readable against the site's light-mode inline code background */
-  :not(pre) > code.language-bassm {
-    background-color: #121314;
+  code.language-bassm span {
+    color: var(--shiki-light);
+  }
+  html[data-theme="dark"] code.language-bassm span {
+    color: var(--shiki-dark);
   }
 </style>
 
