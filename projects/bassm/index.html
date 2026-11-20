@@ -61,7 +61,22 @@ hlt
         bnzi r1 , :.loop
     ret
 !endscope
-</code></pre> <p>From outside the scope, the loop above is <code class="language-bassm">:countdown.loop</code>.</p> <h3 id="compile-time-arithmetic-and-substitutions">Compile-Time Arithmetic and Substitutions</h3> <p>An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so <code class="language-bassm">( :end - :start )</code> gives the size of a block of code.</p> <pre><code class="language-bassm">lib r1 , ( 2 + 3 * 4 )
+</code></pre> <p>From outside the scope, the loop above is <code class="language-bassm">:countdown.loop</code>.</p> <p>Scopes can also be anonymous, which allows for the separation of local and global labels without requiring the scope to take a global name, as seen below.</p> <pre><code class="language-bassm">
+!scope
+    lib r1 , 3
+    loop:
+        dec r1
+        bnzi r1 , :.loop
+!endscope
+
+!scope
+    lib r1 , 3
+    loop:
+        dec r1
+        bnzi r1 , :.loop # No conflict with the other loop
+!endscope
+
+</code></pre> <h3 id="compile-time-arithmetic-and-substitutions">Compile-Time Arithmetic and Substitutions</h3> <p>An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so <code class="language-bassm">( :end - :start )</code> gives the size of a block of code.</p> <pre><code class="language-bassm">lib r1 , ( 2 + 3 * 4 )
 liw r2 , ( ( 1 &lt;&lt; 40 ) | 0xFF )
 lib r3 , ( 10 &gt; 5 ? 1 : 0 )
 </code></pre> <p><code class="language-bassm">def name</code> defines a substitution called <code class="language-bassm">name</code>, and <code class="language-bassm">$name</code> is replaced by whatever text is assigned to that substitution. This is used to give names to memory-mapped registers and to the general-purpose registers a program uses, along with defining constants:</p> <pre><code class="language-bassm">def SCREEN = 64000
@@ -74,7 +89,12 @@ def width = 15
 def r_width = r34
 
 lib $r_width , $width
-</code></pre> <h3 id="macros">Macros</h3> <p>A substitution with <code class="language-bassm">@</code> parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, including whole blocks of statements, and it can even be a mnemonic, so one macro can work with several different instructions. A macro that defines labels is automatically wrapped in its own scope, so it can be used as many times as needed.</p> <p>That turned out to be enough to build structured control flow on top of raw branches. Below is the <code class="language-bassm">when</code> macro from my Snake program, along with the keyboard handler that uses it. Passing <code class="language-bassm">is=eq</code> drops an <code class="language-bassm">eq</code> comparison into the macro body, and <code class="language-bassm">do=</code> takes the block of code to run:</p> <pre><code class="language-bassm"># when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
+</code></pre> <p>Substitutions can also be undefined using undef:</p> <pre><code class="language-bassm">def r_A = r1
+lib $r_A , 10 # Works
+
+undef r_A
+lib $r_A , 15 # Does not work
+</code></pre> <h3 id="macros">Macros</h3> <p>A substitution with <code class="language-bassm">@</code> parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, as it is simple textual replacement. That includes whole blocks of statements along with mnemonics, so one macro can work with several different instructions. If a macro defines labels is automatically wrapped in its own anonymous scope, so that multiple uses do not cause conflicting label names.</p> <p>Given that the parameters are replaced with text substitution, the macros wind up being very powerful and allow for nicely structured code. For example, it is possible to build structured control flow on top of raw branches. Below is the <code class="language-bassm">when</code> macro from my Snake program, along an example of its use. Passing <code class="language-bassm">is=eq</code> drops an <code class="language-bassm">eq</code> comparison into the macro body, and <code class="language-bassm">do=</code> takes the block of code to run:</p> <pre><code class="language-bassm"># when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
 def when =
 {
     @is @reg , @val , $r_cond
@@ -85,28 +105,21 @@ def when =
     endif:
 }
 
-def key_body = {
-    ldb $r_kb_data_addr , $r_kb_data
-    $when[reg=$r_kb_data , is=eq , val=$r_w , do={$change_dir[todir=$r_up , dx=$r_zero , dy=$r_neg_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_a , do={$change_dir[todir=$r_left , dx=$r_neg_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_s , do={$change_dir[todir=$r_down , dx=$r_zero , dy=$r_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_d , do={$change_dir[todir=$r_right , dx=$r_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_q , do={$peek[addr=$KB_CLEAR , reg=$r_unsafe] ; hlt}]
+lib r1 , 5
+lib r2 , 5
 
-    ldb $r_kb_status_addr , $r_kb_status
-}
+# Will call to print_message and then do the code defined in $do_some_inline_code
+$when[reg=r1 , is=eq , val=r2 , do={cali :print_message; $do_some_inline_code}]
 
-def handle_keys = {
-    ldb $r_kb_status_addr , $r_kb_status
-    $while[reg=$r_kb_status , is=eq , val=$r_one , do=$key_body]
-    keys_done:
-}
-</code></pre> <p>Snake defines a whole family of these: <code class="language-bassm">if</code>, <code class="language-bassm">when</code>, and <code class="language-bassm">while</code>, each with a variant that compares against an immediate value, plus a <code class="language-bassm">fori</code> counting loop.</p> <h3 id="position-independent-code">Position-Independent Code</h3> <p><code class="language-bassm">!label_origin</code> makes all later label references relative to the current address. Combined with the <code class="language-bassm">pc</code> instruction, which reads the address of the current instruction, and <code class="language-bassm">sjo</code>, which sets the jump origin that the CPU adds to every jump, branch, and call target, this produces code that runs correctly wherever it is loaded:</p> <pre><code class="language-bassm">!label_origin
+# Will not do what is in the do block, as r1 is not less than r2
+$when[reg=r1 , is=lt , val=r2 , do={cali :print_message; $do_some_inline_code}]
+</code></pre> <p>Snake defines a whole family of these: <code class="language-bassm">if</code>, <code class="language-bassm">when</code>, and <code class="language-bassm">while</code>, each with a variant that compares against an immediate value, plus a <code class="language-bassm">fori</code> counting loop.</p> <p>Macros can also be undefined in the same way that substitutions can, as macros and substitutions are really just the same thing, with substitutions just not taking any parameters.</p> <h3 id="position-independent-code">Position-Independent Code</h3> <p><code class="language-bassm">!label_origin</code> makes all later label references relative to the current address. Combined with the <code class="language-bassm">pc</code> instruction, which reads the address of the current instruction, and <code class="language-bassm">sjo</code>, which sets the jump origin that the CPU adds to every jump, branch, and call target, this produces code that runs correctly wherever it is loaded:</p> <pre><code class="language-bassm">!label_origin
 pc r1                   # r1 = the address of this instruction
 sjo r1                  # add r1 to every jump, branch, and call
 
 loop:
-    jmpi :loop          # the target is relative, and JO makes it absolute
+    jmpi :loop          # the target is relative to !label_origin (which points at pc r1), 
+                        # and the jump origin makes it absolute
 </code></pre> <p>Loads and stores still use absolute addresses, so data reached through a label needs the origin added by hand.</p> <h3 id="writing-fast-code">Writing Fast Code</h3> <p>The Bashputer’s clock advances once per bus access, so the cost of an instruction is the number of bytes it occupies plus the number of bytes it reads or writes. That makes some very different-looking code equivalent in speed, and some innocent-looking code very expensive. A <code class="language-bassm">JMPI</code> costs 9 clock cycles because its 8-byte target has to be fetched, while a <code class="language-bassm">JMP</code> to a register costs 2, and a <code class="language-bassm">CALI</code> and <code class="language-bassm">RET</code> pair costs 26. Macros make it easy to inline code instead of calling it, and to load branch targets into registers once and reuse them in hot loops.</p> <p>The FastSnake program is the result of applying those ideas to my Snake, and you can see the difference side by side on the <a href="/projects/bashputer/#results">Bashputer page</a>.</p> <h3 id="editor-support">Editor Support</h3> <p>The repo includes a VS Code extension that adds syntax highlighting for <code class="language-plaintext highlighter-rouge">.bassm</code> files, covering comments, mnemonics, registers, labels, scopes, substitutions, and macro parameters. To install it, link it into your extensions folder from the root of the repository and restart VS Code:</p> <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> <span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/Assembler/Assembly Extension"</span> ~/.vscode/extensions/bassm-syntax
 </code></pre></div></div> <h3 id="example-programs">Example Programs</h3> <p>The source for every included program is in <code class="language-plaintext highlighter-rouge">Assembler/Examples/</code>. I wrote Snake and the Fibonacci printer. FastSnake is my Snake optimized by Claude, and Claude also wrote Pong, FastPong, a Towers of Hanoi solver, a maze generator, and a Showcase program that tours the language’s features. Each one can be assembled and run with the commands above.</p> <h3 id="implementation">Implementation</h3> <p>The assembler is written in <a href="https://www.gnu.org/software/bash/manual/bash.html" rel="external nofollow noopener" target="_blank">Bash</a>, and the syntax highlighting is a VS Code TextMate grammar. I wrote the assembler, and I developed the VS Code extension from drafts and a walkthrough by Claude. The repo’s README lists exactly which files used AI and how.</p> <style>
   /* Bassm code (fenced bassm blocks, and inline code tagged with the language-bassm class) is colored by
