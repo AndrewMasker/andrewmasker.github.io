@@ -119,6 +119,26 @@ hlt
 
 From outside the scope, the loop above is `:countdown.loop`{:.language-bassm}.
 
+Scopes can also be anonymous, which allows for the separation of local and global labels without requiring the scope to take a global name, as seen below.
+
+```bassm
+
+!scope
+    lib r1 , 3
+    loop:
+        dec r1
+        bnzi r1 , :.loop
+!endscope
+
+!scope
+    lib r1 , 3
+    loop:
+        dec r1
+        bnzi r1 , :.loop # No conflict with the other loop
+!endscope
+
+```
+
 ### Compile-Time Arithmetic and Substitutions
 
 An expression in parentheses is evaluated when the program is assembled, using Bash arithmetic on 64-bit signed integers. Expressions can include labels, so `( :end - :start )`{:.language-bassm} gives the size of a block of code.
@@ -144,11 +164,21 @@ def r_width = r34
 lib $r_width , $width
 ```
 
+Substitutions can also be undefined using undef:
+
+```bassm
+def r_A = r1
+lib $r_A , 10 # Works
+
+undef r_A
+lib $r_A , 15 # Does not work
+```
+
 ### Macros
 
-A substitution with `@`{:.language-bassm} parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, including whole blocks of statements, and it can even be a mnemonic, so one macro can work with several different instructions. A macro that defines labels is automatically wrapped in its own scope, so it can be used as many times as needed.
+A substitution with `@`{:.language-bassm} parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, as it is simple textual replacement. That includes whole blocks of statements along with mnemonics, so one macro can work with several different instructions. If a macro defines labels is automatically wrapped in its own anonymous scope, so that multiple uses do not cause conflicting label names.
 
-That turned out to be enough to build structured control flow on top of raw branches. Below is the `when`{:.language-bassm} macro from my Snake program, along with the keyboard handler that uses it. Passing `is=eq`{:.language-bassm} drops an `eq`{:.language-bassm} comparison into the macro body, and `do=`{:.language-bassm} takes the block of code to run:
+Given that the parameters are replaced with text substitution, the macros wind up being very powerful and allow for nicely structured code. For example, it is possible to build structured control flow on top of raw branches. Below is the `when`{:.language-bassm} macro from my Snake program, along an example of its use. Passing `is=eq`{:.language-bassm} drops an `eq`{:.language-bassm} comparison into the macro body, and `do=`{:.language-bassm} takes the block of code to run:
 
 ```bassm
 # when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
@@ -162,25 +192,19 @@ def when =
     endif:
 }
 
-def key_body = {
-    ldb $r_kb_data_addr , $r_kb_data
-    $when[reg=$r_kb_data , is=eq , val=$r_w , do={$change_dir[todir=$r_up , dx=$r_zero , dy=$r_neg_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_a , do={$change_dir[todir=$r_left , dx=$r_neg_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_s , do={$change_dir[todir=$r_down , dx=$r_zero , dy=$r_one]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_d , do={$change_dir[todir=$r_right , dx=$r_one , dy=$r_zero]; jmpi :.keys_done}]
-    $when[reg=$r_kb_data , is=eq , val=$r_q , do={$peek[addr=$KB_CLEAR , reg=$r_unsafe] ; hlt}]
+lib r1 , 5
+lib r2 , 5
 
-    ldb $r_kb_status_addr , $r_kb_status
-}
+# Will call to print_message and then do the code defined in $do_some_inline_code
+$when[reg=r1 , is=eq , val=r2 , do={cali :print_message; $do_some_inline_code}]
 
-def handle_keys = {
-    ldb $r_kb_status_addr , $r_kb_status
-    $while[reg=$r_kb_status , is=eq , val=$r_one , do=$key_body]
-    keys_done:
-}
+# Will not do what is in the do block, as r1 is not less than r2
+$when[reg=r1 , is=lt , val=r2 , do={cali :print_message; $do_some_inline_code}]
 ```
 
 Snake defines a whole family of these: `if`{:.language-bassm}, `when`{:.language-bassm}, and `while`{:.language-bassm}, each with a variant that compares against an immediate value, plus a `fori`{:.language-bassm} counting loop.
+
+Macros can also be undefined in the same way that substitutions can, as macros and substitutions are really just the same thing, with substitutions just not taking any parameters.
 
 ### Position-Independent Code
 
@@ -192,7 +216,8 @@ pc r1                   # r1 = the address of this instruction
 sjo r1                  # add r1 to every jump, branch, and call
 
 loop:
-    jmpi :loop          # the target is relative, and JO makes it absolute
+    jmpi :loop          # the target is relative to !label_origin (which points at pc r1), 
+                        # and the jump origin makes it absolute
 ```
 
 Loads and stores still use absolute addresses, so data reached through a label needs the origin added by hand.
