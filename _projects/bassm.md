@@ -220,12 +220,14 @@ The source for every included program is in `Assembler/Examples/`. I wrote Snake
 The assembler is written in <a href="https://www.gnu.org/software/bash/manual/bash.html">Bash</a>, and the syntax highlighting is a VS Code TextMate grammar. I wrote the assembler, and I developed the VS Code extension from drafts and a walkthrough by Claude. The repo's README lists exactly which files used AI and how.
 
 <style>
-  /* Bassm colors come from assets/js/bassm-highlight.js and follow the site's light/dark theme */
-  .language-bassm span {
-    color: var(--shiki-light);
+  /* Bassm blocks use VS Code's Dark 2026 theme (colored by assets/js/bassm-highlight.js) in
+     both site modes, so give them that theme's editor background and default text color.
+     These match editor.background / editor.foreground in assets/json/vscode-dark-2026.json. */
+  pre:has(> code.language-bassm) {
+    background-color: #121314;
   }
-  html[data-theme="dark"] .language-bassm span {
-    color: var(--shiki-dark);
+  code.language-bassm {
+    color: #bbbebf;
   }
 </style>
 

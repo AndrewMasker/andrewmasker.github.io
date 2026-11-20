@@ -4,7 +4,7 @@
 // Usage: fence code blocks as ```bassm, then load this file as a module on the page.
 // Rouge doesn't know Bassm, so kramdown renders those blocks unhighlighted as
 // <pre><code class="language-bassm">, and this script colors them in the browser.
-// If Shiki or the grammar can't be loaded, the blocks stay as plain text.
+// If Shiki, the grammar, or the theme can't be loaded, the blocks stay as plain text.
 
 import { createHighlighter, createJavaScriptRegexEngine } from "https://esm.sh/shiki@4.6.0";
 
@@ -12,7 +12,19 @@ import { createHighlighter, createJavaScriptRegexEngine } from "https://esm.sh/s
 // jsDelivr caches branch files, so a change can take a while to appear.
 const GRAMMAR_URL = "https://cdn.jsdelivr.net/gh/AndrewMasker/Bashputer@master/Assembler/Assembly%20Extension/syntaxes/bassm.tmLanguage.json";
 
-const THEMES = { light: "light-plus", dark: "dark-plus" };
+// VS Code's "Dark 2026" default theme. Shiki doesn't bundle it, so it's flattened into one
+// file from VS Code's theme-defaults extension (see the _source field in the file). The
+// site's baseurl is empty, so a root-relative path works. Blocks use this dark theme in
+// both of the site's light and dark modes; the page's <style> gives them the matching
+// editor background (#121314) and foreground (#BBBEBF).
+const THEME_URL = "/assets/json/vscode-dark-2026.json";
+const THEME = "dark-2026";
+
+async function fetchJson(url, what) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${what} request failed: ${response.status}`);
+  return response.json();
+}
 
 // The site's jekyll-terser plugin minifies every .js file in script mode, which can't
 // parse top-level `await`. When minifying fails, the plugin skips writing the file, so the
@@ -23,14 +35,12 @@ async function highlightBassm() {
   const blocks = document.querySelectorAll("code.language-bassm, .language-bassm pre code");
   if (!blocks.length) return;
 
-  const response = await fetch(GRAMMAR_URL);
-  if (!response.ok) throw new Error(`grammar request failed: ${response.status}`);
-  const grammar = await response.json();
+  const [grammar, theme] = await Promise.all([fetchJson(GRAMMAR_URL, "grammar"), fetchJson(THEME_URL, "theme")]);
 
   const highlighter = await createHighlighter({
     // The grammar's own name is "Bashputer Assembly", so give it a short id here
     langs: [{ ...grammar, name: "bassm" }],
-    themes: Object.values(THEMES),
+    themes: [theme],
     // Shiki's default regex engine (Oniguruma) is WebAssembly, which the site's
     // Content-Security-Policy blocks: compiling WebAssembly needs 'wasm-unsafe-eval' in
     // script-src. The JavaScript engine needs no WebAssembly and gives identical output
@@ -41,10 +51,9 @@ async function highlightBassm() {
   for (const code of blocks) {
     const html = highlighter.codeToHtml(code.textContent, {
       lang: "bassm",
-      themes: THEMES,
-      defaultColor: false, // emit both colors as --shiki-light / --shiki-dark
+      theme: THEME,
     });
-    // Keep the site's own <pre> (background, copy button) and swap in only the colored text
+    // Keep the site's own <pre> (copy button, layout) and swap in only the colored text
     const template = document.createElement("template");
     template.innerHTML = html;
     code.innerHTML = template.content.querySelector("code").innerHTML;
