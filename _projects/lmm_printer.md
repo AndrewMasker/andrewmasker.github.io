@@ -315,7 +315,15 @@ This version works: the cartridge heaters keep the slurry molten throughout prin
     Fig. 14. Too much of a good thing: slurry that drained through an unused screw hole once the cartridge heaters were in.
 </div>
 
-The recoater blade is heated separately, by three 3D-printer heater cartridges and a single thermistor that serves as both its control and limit sensor.
+The recoater blade is heated separately, by three 3D-printer heater cartridges on the back of the blade, and it uses two thermistors. The one on the back, next to the cartridges, runs the PID loop and acts as its safety limit. The one on the front of the blade acts as a gate: the Pi waits until the front of the blade is within a set window of its target before printing (and, likewise, until the IR sensor shows the slurry is up to temperature). Each sensor fails on its own. Controlling from the back alone, the cartridge blocks reach the setpoint but the blade itself, with its high thermal mass, never does. Controlling from the front alone, the loop has so much lag that it overshoots badly. Splitting the roles gives a fast, stable loop and a blade that is actually at temperature when it touches the slurry.
+
+<div class="img-placeholder">
+  <strong>Image placeholder:</strong> photo of the recoater blade showing the heater cartridges and back thermistor, and the front thermistor.<br>
+  Suggested file: <code>assets/img/projects/personal/lmm_printer/recoater_blade_heating.jpg</code>
+</div>
+<div class="caption">
+    Fig. 15. The heated recoater blade: cartridges and control thermistor on the back, gating thermistor on the front.
+</div>
 
 ### Post-Processing: Debinding and Sintering
 
@@ -326,7 +334,7 @@ For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My 
   Suggested file: <code>assets/img/projects/personal/lmm_printer/kiln.jpg</code>
 </div>
 <div class="caption">
-    Fig. 15. The converted tabletop kiln used for sintering.
+    Fig. 16. The converted tabletop kiln used for sintering.
 </div>
 
 Further out, I plan to build a dedicated 1,500 °C furnace: a cast alumina muffle with silicon carbide heating elements, SCR power control, a type S or B thermocouple, an argon purge at slight positive pressure, and an oxygen-depletion monitor. A 1,500 °C limit covers steel, copper, bronze, and tungsten carbide (WC-Co). Carbide is hard to make in complex shapes any other way, which makes it the most interesting target. Carbon burial works for copper, bronze, and plain steel, but not for carbide, so the argon atmosphere stays in the long-term design.
@@ -344,7 +352,7 @@ There is no finished part yet. Here is where things stand:
   Suggested file: <code>assets/img/projects/personal/lmm_printer/results_slurry_tests.jpg</code>
 </div>
 <div class="caption">
-    Fig. 16. Slurry test results.
+    Fig. 17. Slurry test results.
 </div>
 
 ### Lessons Learned
