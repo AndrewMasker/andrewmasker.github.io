@@ -1,0 +1,71 @@
+{% comment %}
+  A figure that shows up once its image file exists.
+
+  Usage (one image, or two side by side with file2/note2):
+    {% include figure_slot.liquid file="machine_overview.jpg" note="What the photo should show" caption="Caption text." %}
+
+  Parameters:
+    file, file2   image file names, relative to `dir` (file2 is optional)
+    dir           folder holding the images; defaults to the page's `figure_dir` front matter
+    note, note2   what each photo should show (only used for the placeholder)
+    caption       caption shown under the figure
+    alt, alt2     optional alt text; defaults to the caption
+
+  Behavior:
+    - Every image is in the folder: the figure and caption render normally (click to zoom).
+    - Any image missing, production build (JEKYLL_ENV=production, i.e. the live site): nothing renders.
+    - Any image missing, local preview: a dashed placeholder box with the note and the
+      expected path, so missing photos are easy to spot and drop in.
+{% endcomment %}
+{%- assign fs_dir = include.dir | default: page.figure_dir -%}
+{%- capture fs_path1 %}{{ fs_dir }}/{{ include.file }}{% endcapture -%}
+{%- assign fs_key1 = fs_path1 | prepend: '/' -%}
+{%- assign fs_has1 = site.static_files | where: 'path', fs_key1 | size -%}
+{%- assign fs_ready = false -%}
+{%- if include.file2 -%}
+  {%- capture fs_path2 %}{{ fs_dir }}/{{ include.file2 }}{% endcapture -%}
+  {%- assign fs_key2 = fs_path2 | prepend: '/' -%}
+  {%- assign fs_has2 = site.static_files | where: 'path', fs_key2 | size -%}
+  {%- if fs_has1 > 0 and fs_has2 > 0 -%}{%- assign fs_ready = true -%}{%- endif -%}
+{%- else -%}
+  {%- if fs_has1 > 0 -%}{%- assign fs_ready = true -%}{%- endif -%}
+{%- endif -%}
+{%- assign fs_alt1 = include.alt | default: include.caption | strip_html -%}
+{%- assign fs_alt2 = include.alt2 | default: include.caption | strip_html -%}
+{%- if fs_ready %}
+  <div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+      {% include figure.liquid path=fs_path1 alt=fs_alt1 class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+    {%- if include.file2 %}
+      <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path=fs_path2 alt=fs_alt2 class="img-fluid rounded z-depth-1" zoomable=true %}
+      </div>
+    {%- endif %}
+  </div>
+  <div class="caption">
+    {{ include.caption }}
+  </div>
+{%- elsif jekyll.environment != 'production' %}
+  <div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+      <div class="img-placeholder">
+        <strong>Image placeholder:</strong> {{ include.note -}}
+        <br>
+        <code>{{ fs_path1 }}</code>
+      </div>
+    </div>
+    {%- if include.file2 %}
+      <div class="col-sm mt-3 mt-md-0">
+        <div class="img-placeholder">
+          <strong>Image placeholder:</strong> {{ include.note2 -}}
+          <br>
+          <code>{{ fs_path2 }}</code>
+        </div>
+      </div>
+    {%- endif %}
+  </div>
+  <div class="caption">
+    {{ include.caption }}
+  </div>
+{%- endif %}
