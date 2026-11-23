@@ -41,11 +41,11 @@ assets/img/projects/personal/lmm_printer/ under the listed name. Until then it i
 on the live site and shows as a dashed placeholder in a local preview.
 -->
 
-Note: This project is a work in progress. The printer has not produced a finished metal part yet. So far the results are the machine itself and a series of slurry tests. This page covers how the process works, how the machine is designed, and what I have learned along the way, and I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
+Note: This project is a work in progress. The printer has not produced a finished metal part yet. So far the results are the machine itself, a series of slurry tests, and some test runs of the printer. This page covers how the process works, how the machine is designed, and what I have learned along the way, and I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
 
 {% include figure_slot.liquid file="Printer_Hero.jpg" width="5" file2="CAD_Full_Perspective.png" width2="7" caption="The current prototype (left) and the full machine in Onshape (right)." %}
 
-### Useful Skills/Topics Learned
+### Useful Skills Learned/Used
 
 Onshape CAD, KiCad PCB design and board bring-up, embedded C++ (Teensy), Python, Raspberry Pi Linux configuration, I2C/SMBus and SPI peripherals, PID temperature control, heat transfer estimation, mains heater wiring with SSRs, machining, DLP optics, photopolymer and wax binder formulation, powder suspension rheology, debinding and sintering process design
 
@@ -62,11 +62,11 @@ The printer is a top-down, heated-paste machine, similar in concept to the Incus
 - a **meltable wax**, which keeps the slurry fluid when warm and solid at room temperature, and
 - a **UV-curable acrylate photopolymer**, which crosslinks under 405 nm light and holds each layer together.
 
-A piston pushes slurry up out of a heated reservoir, and a heated recoater blade drags it across the build platform as a thin, flat layer. A DLP projector then cures the layer's cross-section from above. Repeating this builds a "green" part, which is still mostly binder by volume and not yet metal. The firmware runs each layer as follows:
+A piston pushes slurry up out of a heated reservoir, and a heated recoater blade drags it across the build platform as a thin, flat layer. A DLP projector then cures the layer's cross-section from above. Repeating this builds a "green" part, which still contains cured binder and is not yet solid, sintered metal. The firmware runs each layer as follows:
 
 1. The reservoir piston rises by 1.1× the layer thickness, leaving a little extra slurry for the blade.
 2. The recoater blade sweeps across, leveling a fresh layer over the build plate.
-3. The projector exposes the layer. The projector is double-buffered, so the next layer's image loads in the background during exposure.
+3. The projector exposes the layer (the projector is double-buffered, so the next layer's image loads in the background during exposure).
 4. The build platform drops by one layer thickness and the recoater returns home.
 
 To become metal, the green part is debound and then sintered. First a solvent (an aliphatic like heptane) dissolves the wax, leaving the cured resin intact and opening pore channels. Next, thermal debinding burns out the remaining resin. Last, the part is sintered in a furnace, where the powder fuses into dense metal and the part shrinks.
