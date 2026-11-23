@@ -43,7 +43,7 @@ on the live site and shows as a dashed placeholder in a local preview.
 
 Note: This project is a work in progress. The printer has not produced a finished metal part yet. So far the results are the machine itself and a series of slurry tests. This page covers how the process works, how the machine is designed, and what I have learned along the way, and I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
 
-{% include figure_slot.liquid file="machine_overview.jpg" note="hero photo of the current prototype, ideally a three-quarter view showing the frame, reservoir, recoater, and projector." caption="The current prototype." %}
+{% include figure_slot.liquid file="Printer_Hero.jpg" width="5" file2="CAD_Full_Perspective.png" width2="7" caption="The current prototype (left) and the full machine in Onshape (right)." %}
 
 ### Useful Skills/Topics Learned
 
@@ -84,21 +84,21 @@ I designed the machine in Onshape. The frame is 20 × 20 aluminum extrusion, eve
   <tr><td>Recoater</td><td>Heated blade sweeps slurry across the deck</td><td>8 mm/rev</td><td>~200 mm</td></tr>
 </table>
 
-{% include figure_slot.liquid file="cad_full_assembly.png" note="Onshape render of the full machine assembly." caption="Full machine assembly in Onshape." %}
+{% include figure_slot.liquid file="Piston_Section_View_Perspective.png" width="4" caption="Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above." %}
 
 Before settling on this layout, I looked at several other ways to spread a peanut-butter-thick paste into layers around 100 µm, including tape casting, doctor blades, slot-die coating, and roll-to-roll casting. For feeding it, I studied piston feeding of wax-based feedstock (the force needed to push a slug through a tube) and compared peristaltic pumps, which turned out to be a poor fit for viscous feedstock.
 
 The build deck is a fixed aluminum plate with two rectangular openings, one for the reservoir and one for the build platform. I originally considered a removable top plate that could be swapped for one with smaller openings, to waste less feedstock on small prints. I dropped it because it added a lot of complexity, and because a similar idea may already be patented. That wouldn't have stopped a one-off build that isn't for sale, but it didn't fit the spirit of the project. The reservoir is about 130 × 70 mm and shares one long wall with the build chamber. That shared wall became important later, when heating the slurry turned out to be the hardest problem on the machine (see [Heating the Slurry](#heating-the-slurry)).
 
-{% include figure_slot.liquid file="cad_reservoir_build_section.png" note="CAD section view of the reservoir, piston, and build platform side by side under the deck." file2="cad_recoater.png" note2="CAD close-up of the recoater carriage and heated blade." caption="Left: reservoir and build platform. Right: recoater carriage." %}
+{% include figure_slot.liquid file="Chamber_View_General_Recoater_PTC_Heater.jpg" file2="Recoater_Close_Up.png" caption="The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD." %}
 
 The reservoir piston and the build platform each move vertically inside their own opening. Originally each one was guided by V-wheels pressed up into the corners of its opening. That proved unreliable, so I replaced the wheels with a slightly oversized TPU fitting around each platform, which constrains its motion against the walls.
 
-{% include figure_slot.liquid file="platform_vwheels.jpg" note="photo or CAD of the original V-wheel guidance in the corners of a platform opening." file2="platform_tpu_fitting.jpg" note2="photo of the TPU fitting on the reservoir piston or build platform." caption="Platform guidance. Left: the original V-wheels. Right: the TPU fitting that replaced them." %}
+{% include figure_slot.liquid file="V-Wheel_Aligner_Section_Perspective.png" file2="TPU_Aligner_Section_Perspective.png" caption="Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them." %}
 
 The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560 × 1440 pixels). I chose DLP over an LCD mask because an LCD has to sit almost in contact with the material, which does not work against a heated paste. A projector works from a distance, so the optics stay clear of the heat. I measured the Mars 4 DLP and worked out the mounting geometry (throw distance, projector position, and focus) in CAD from those measurements.
 
-{% include figure_slot.liquid file="cad_projector_mount.png" note="CAD view (or photo) of the projector mount above the build area, ideally showing the throw path." caption="Projector mounting above the build platform." %}
+{% include figure_slot.liquid file="Projector_Aa_Visual_Prspective.png" caption="The projector mount above the deck. The pink lines trace the light path through the glass window in the top plate onto the build platform." %}
 
 ### Electronics
 
@@ -106,11 +106,17 @@ Control is split between two boards. A Raspberry Pi Zero W runs the print job, d
 
 #### Prototype vs. Custom PCB
 
-I first built the electronics on breadboards with off-the-shelf modules (the Teensy, the Pi, DRV8825 stepper driver carriers, and so on) to prove out the architecture and firmware. In that phase I measured the chamber air and the recoater blade with DS18B20 digital temperature sensors, but reading them caused hitches in the motor movement, so I switched to analog thermistors. Once the prototype worked, I designed a carrier PCB in KiCad and had it made by JLCPCB. The PCB holds everything the breadboards did, in a form that can actually live inside the machine.
+I first built the electronics on breadboards with off-the-shelf modules (the Teensy, the Pi, DRV8825 stepper driver carriers, and so on) to prove out the architecture and firmware. In that phase I measured the chamber air and the recoater blade with DS18B20 digital temperature sensors, but reading them caused hitches in the motor movement, so I switched to analog thermistors.
 
-{% include figure_slot.liquid file="electronics_breadboard.jpg" note="photo of the breadboard prototype electronics." file2="electronics_pcb_assembled.jpg" note2="photo of the assembled custom PCB, ideally framed the same way as the breadboard photo for comparison." caption="Left: breadboard prototype. Right: the custom PCB that replaced it." %}
+{% include figure_slot.liquid file="Motor_Control_Prototype_Electronics_Closeup.jpg" file2="Pi_Breakout_And_Thermistor_Prototype_Electronics.jpg" caption="The breadboard prototype. Left: stepper drivers and motor control. Right: the Raspberry Pi breakout and thermistor circuits." %}
 
-{% include figure_slot.liquid file="pcb_kicad_layout.png" note="KiCad PCB layout or 3D render of the board (and/or a schematic snippet)." caption="The PCB layout in KiCad." %}
+Once the prototype worked, I designed a carrier PCB in KiCad and had it made by JLCPCB. The PCB holds everything the breadboards did, in a form that can actually live on the machine.
+
+{% include figure_slot.liquid file="Prototype_Electronics.jpg" file2="PCB_Front_View.jpg" caption="On top of the machine. Left: the breadboard prototype. Right: the custom PCB that replaced it, with the Pi, the GUI screen, and the rotary encoder." %}
+
+{% include figure_slot.liquid file="KiCad_Schematic.png" caption="The board schematic in KiCad." %}
+
+{% include figure_slot.liquid file="KiCad_PCB_View.png" file2="KiCad_PCB_3D_View.png" caption="The PCB in KiCad. Left: the layout. Right: the 3D view." %}
 
 The PCB carries:
 
@@ -122,6 +128,8 @@ The PCB carries:
 - an onboard buck regulator that makes the 5 V rail from the 12 V supply.
 
 Bringing up the board taught me a lot. On first power-up, the 5 V rail measured 12 V. I traced it with step-by-step measurements to an open feedback path. One feedback resistor had never been soldered, so the regulator was running flat out. I tested the Teensy and Pi separately before reconnecting them. A pin-by-pin cross-check of the netlist against the firmware also turned up a pair of swapped heater pins, a limit switch missing its pull-up, and a projector interrupt pin that had moved. All of these have been fixed.
+
+{% include figure_slot.liquid file="PCB_Not_Assembled.jpg" file2="PCB_Top_View.jpg" caption="Left: the bare board from JLCPCB. Right: assembled, with the Teensy, Pi, and stepper drivers in place." %}
 
 #### Firmware and Software
 
@@ -141,7 +149,7 @@ The Pi runs a Python package, `lmm_printer`:
 
 The projector is driven over SPI using code from the open-source <a href="https://github.com/openMLA/elegoo-mars-4-dlp-controller">openMLA Elegoo Mars 4 DLP controller</a> project, which is vendored into the repository under its MIT license. Many thanks to the openMLA project for that work.
 
-{% include figure_slot.liquid file="gui_screen.jpg" note="photo of the 240 × 240 GUI screen and rotary encoder on the machine, showing the menu and status panel." caption="The on-machine GUI." %}
+{% include figure_slot.liquid file="UI_Panel.jpg" caption="The on-machine GUI on the 240 × 240 screen: the main menu, with the status and log panel below it." %}
 
 ### The Slurry
 
@@ -164,7 +172,7 @@ Every batch so far uses 325-mesh copper powder and stearic acid as a dispersant 
 
 The first three formulas mapped out the basic trade-off with off-the-shelf printer resin. Adding resin lowered the melting point but raised the viscosity, and adding wax did the reverse. That pointed to two changes: a lower-melting wax, and a lower-viscosity UV-curable liquid. Coconut wax and UV ink (the kind used in UV printers) filled those roles, starting with formula 4. By formula 6, coconut wax had fully replaced the 122 °F blend, and that gave the best mix so far. Formula 7 cuts the wax further to lower the melting point.
 
-{% include figure_slot.liquid file="slurry_early.jpg" note="photo of an early slurry batch (formulas 1–3, printer resin + 122 °F wax blend), e.g. showing the resin/wax separation." file2="slurry_current.jpg" note2="photo of a recent UV ink / coconut wax slurry (formula 6 or 7), ideally melted to show how it flows." caption="Left: an early printer-resin slurry. Right: a recent UV ink and coconut wax slurry." %}
+{% include figure_slot.liquid file="Current_Slurry_Room_Temp_Spread.mp4" file2="Current_Slurry_Heated.mp4" caption="The current slurry. Left: at room temperature it is a crumbly solid. Right: warmed, it spreads into a smooth layer." %}
 
 #### Powder Loading
 
@@ -172,7 +180,7 @@ The first four formulas were all at 50 vol% copper, and they were thick. The cop
 
 The dispersant dose is also worth revisiting. In these formulas, stearic acid works out to roughly 0.3–0.6% of the powder mass. A rough estimate of a stearic-acid monolayer on this copper puts the need at only about 0.02–0.1%. Rather than assume more is better, the plan is to test a range.
 
-{% include figure_slot.liquid file="copper_powder.jpg" note="close-up of the irregular copper powder (microscope photo if available), or the tap-density measurement setup." caption="The 325-mesh irregular copper powder." %}
+{% include figure_slot.liquid file="Early_Reduced_Powder_Vol_Spread_Test.mp4" caption="An early spread test after lowering the copper loading." %}
 
 ### Heating the Slurry
 
@@ -180,7 +188,7 @@ The slurry is solid at room temperature, so heat is what makes it printable, and
 
 **Version 1: PTC air heating.** The first version heated the air in the build chamber with a PTC heater. A thermistor measured the air temperature, and the control loop assumed the slurry would track it. That assumption proved wrong. Air moves heat poorly into a dense, metal-filled paste, so the air could be at temperature while the slurry stayed solid.
 
-{% include figure_slot.liquid file="heating_v1_ptc.jpg" note="photo of the PTC chamber heater and the air thermistor." caption="Version 1: heating the chamber air with a PTC heater." %}
+{% include figure_slot.liquid file="Air_Thermistor_Housing_with_Heatsink_Fins.jpg" caption="Version 1: the air thermistor, in a finned housing on the underside of the top plate next to the projector window. The PTC heater and fan are on the right of the deck photo above." %}
 
 **Version 2: measure the slurry, heat the reservoir walls.** Version 2 fixed what the loop measures and where the heat goes:
 
@@ -189,21 +197,19 @@ The slurry is solid at room temperature, so heat is what makes it printable, and
 - The PTC heater was switched to always on, for background warmth.
 - The old air thermistor moved onto the reservoir wall as a safety limit, because wall heaters can get hotter than the slurry is allowed to.
 
-{% include figure_slot.liquid file="heating_v2_polyimide.jpg" note="photo of the reservoir with the polyimide heater pads on its walls." file2="heating_v2_ir_sensor.jpg" note2="photo of the MLX90614 IR thermometer mounted above the slurry." caption="Version 2. Left: polyimide heater pads on the reservoir walls. Right: the IR thermometer aimed at the slurry." %}
+{% include figure_slot.liquid file="IR_Therm_Far_View.jpg" file2="IR_Therm_Closeup.jpg" caption="Version 2: the IR thermometer. Left: on the underside of the top plate next to the projector window, looking down at the slurry. Right: close-up of its housing." %}
 
 Version 2 got the control strategy right but not the power. Because the reservoir shares a wall with the build chamber, only three of its walls can be heated. Rough heat-conduction estimates of warm-up time, across wall temperatures, reservoir sizes, slurry melting points, and three-wall versus four-wall heating, matched what the machine showed: the polyimide pads did not have enough power. This was a power problem, not a firmware bug.
 
 **Version 3: mains cartridge heaters.** The current version uses four 100 W, 110 V cartridge heaters. They sit in fittings I machined from aluminum linear-rail shaft supports, and the fittings are bonded to the reservoir walls with JB Weld. The heaters run from wall power. The 12 V signal that drove the polyimide pads now switches a solid-state relay (SSR), which in turn switches the heaters, so the Teensy's control loop and the IR sensing carried over unchanged. The wall thermistor still acts as the safety limit. The firmware only lets the heaters run while the wall reads between 0 and 100 °C, so an overheating wall, or a shorted or open sensor reading outside that window, cuts the power.
 
-{% include figure_slot.liquid file="heating_v3_cartridges.jpg" note="photo of the machined shaft-support fittings with cartridge heaters, bonded to the reservoir walls." file2="heating_v3_ssr.jpg" note2="photo of the SSR and mains wiring for the heaters (or a before/after of a shaft support being machined into a fitting)." caption="Version 3. Left: cartridge heaters in machined fittings on the reservoir. Right: SSR switching from wall power." %}
+{% include figure_slot.liquid file="Cartridge_Heater_Front.jpg" file2="Cartridge_Heater_Side_And_Safetry_Therm.jpg" caption="Version 3: cartridge heaters in fittings machined from shaft supports and JB-Welded to the reservoir. Left: the front wall. Right: a side wall, with the safety thermistor." %}
+
+{% include figure_slot.liquid file="SSR_Wiring.jpg" caption="The solid-state relay and mains inlet that switch the cartridge heaters from wall power." %}
 
 This version works: the cartridge heaters keep the slurry molten throughout printing. In fact it worked a little too well. On one test run the slurry got runny enough to drain out through a previously unused screw hole in the reservoir, so I filled that hole with JB Weld.
 
-{% include figure_slot.liquid file="heating_v3_leak.jpg" note="photo of the slurry that drained from the unused screw hole, and/or the JB Weld fill." caption="Too much of a good thing: slurry that drained through an unused screw hole once the cartridge heaters were in." %}
-
 **The recoater blade.** The blade is heated separately, by three 3D-printer heater cartridges on its back, and it uses two thermistors. The one on the back, next to the cartridges, runs the PID loop and acts as its safety limit. The one on the front of the blade acts as a gate: the Pi waits until the front of the blade is within a set window of its target before printing (and, likewise, until the IR sensor shows the slurry is up to temperature). Each sensor fails on its own. Controlling from the back alone, the cartridge blocks reach the setpoint but the blade itself, with its high thermal mass, never does. Controlling from the front alone, the loop has so much lag that it overshoots badly. Splitting the roles gives a fast, stable loop and a blade that is actually at temperature when it touches the slurry.
-
-{% include figure_slot.liquid file="recoater_blade_heating.jpg" note="photo of the recoater blade showing the heater cartridges and back thermistor, and the front thermistor." caption="The heated recoater blade: cartridges and control thermistor on the back, gating thermistor on the front." %}
 
 ### Post-Processing: Debinding and Sintering
 
@@ -211,7 +217,7 @@ For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My 
 
 Parts are packed in activated carbon inside an alumina crucible, and the carbon consumes the oxygen around the part. At 1,200 °C this setup suits copper and bronze. Since the printer has not made a green part yet, the kiln has not fired a printed part either.
 
-{% include figure_slot.liquid file="kiln.jpg" note="photo of the converted kiln with its Auber controller (and the carbon-packed crucible if you have one)." caption="The converted tabletop kiln used for sintering." %}
+{% include figure_slot.liquid file="Kiln.jpg" file2="Kiln_Controller_Closeup.jpg" caption="Left: the converted VEVOR kiln. Right: the Auber ramp/soak controller that replaced the stock one." %}
 
 Further out, I plan to build a dedicated 1,500 °C furnace: a cast alumina muffle with silicon carbide heating elements, SCR power control, a type S or B thermocouple, an argon purge at slight positive pressure, and an oxygen-depletion monitor. A 1,500 °C limit covers steel, copper, bronze, and tungsten carbide (WC-Co). Carbide is hard to make in complex shapes any other way, which makes it the most interesting target. Carbon burial works for copper, bronze, and plain steel, but not for carbide, so the argon atmosphere stays in the long-term design.
 
@@ -222,8 +228,6 @@ There is no finished part yet. Here is where things stand:
 - **The machine.** The prototype is built, with the custom PCB, Teensy firmware, and Pi software running together. That includes three-axis motion with homing, projector control, the on-machine GUI, and closed-loop heating with hard safety cutoffs.
 - **The slurry.** Over seven formulations, I moved from off-the-shelf printer resin and a 122 °F wax blend to UV ink and coconut wax. At 45 vol% copper this flows well with little separation, though the melting point is still a little high. The powder's packing limit (0.49 tap density) caps the metal loading for now.
 - **Heating.** Three versions showed that the slurry has to be measured directly and heated through the reservoir walls, not through the air, and that it takes far more power than the first wall heaters gave. The current mains cartridge heaters keep the slurry molten throughout printing.
-
-{% include figure_slot.liquid file="results_slurry_tests.jpg" note="any slurry test results worth showing, e.g. a melt test, a spread or drawdown test, or a side-by-side of batches at different loadings." caption="Slurry test results." %}
 
 ### Lessons Learned
 
