@@ -69,7 +69,7 @@ A piston pushes slurry up out of a heated reservoir, and a heated recoater blade
 3. The projector exposes the layer (the projector is double-buffered, so the next layer's image loads in the background during exposure).
 4. The build platform drops by one layer thickness and the recoater returns home.
 
-To become metal, the green part is debound and then sintered. First a solvent (an aliphatic like heptane) dissolves the wax, leaving the cured resin intact and opening pore channels. Next, thermal debinding burns out the remaining resin. Last, the part is sintered in a furnace, where the powder fuses into dense metal and the part shrinks.
+To become metal, the green part is debound and then sintered. First a solvent (an aliphatic like heptane) dissolves the wax, leaving the cured resin intact and opening pore channels. Next, thermal debinding burns out the remaining resin. Alternatively, the solvent step can be skipped and the wax removed thermally too, in the same slow heating cycle that burns out the resin. Thermal-only debinding is the plan for my first runs. Last, the part is sintered in a furnace, where the powder fuses into dense metal and the part shrinks.
 
 {% include figure_slot.liquid file="process_diagram.png" alt="Cross-section schematic of the printer next to the debinding and sintering steps" caption="The LMM process (schematic, not to scale). Left: printing a green part, with numbers matching the layer steps above. Right: turning it into metal." %}
 
@@ -153,7 +153,7 @@ The projector is driven over SPI using code from the open-source <a href="https:
 
 ### The Slurry
 
-The slurry is where most of the materials work has gone. The long-term target is about 67 vol% metal powder, with a binder made of a low-melting wax plus enough UV-curable resin to hold the green part together. The two binder phases have to work together. Wax and UV resin do not react, but they do not necessarily mix either, so miscibility became one of the main problems. A UV-curable wax is not an option, because the wax phase has to stay meltable and soluble for debinding.
+The slurry is where most of the materials work has gone. The long-term target is about 67 vol% metal powder, with a binder made of a low-melting wax plus enough UV-curable resin to hold the green part together. The two binder phases have to work together. Wax and UV resin do not react, but they do not necessarily mix either, so miscibility became one of the main problems. A UV-curable wax is not an option, because the wax phase has to stay meltable (and soluble, for solvent debinding) so it can be removed.
 
 #### Iterations
 
