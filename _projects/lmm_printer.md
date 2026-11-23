@@ -248,58 +248,75 @@ The dispersant dose is also being revisited. A stearic-acid monolayer on this co
 
 The slurry is solid at room temperature, so heat is what makes it printable, and it has to stay below about 80 °C. Getting enough heat into a dense metal paste has been the main hardware challenge. One hard constraint shaped every version: nothing near the material may emit UV, or the slurry starts curing before it is exposed.
 
-**Version 1: heated chamber air.** The first approach heated the air in the build chamber, using silicone heater pads, PT100 sensing through a MAX31865, SSR switching, and PID control from the Pi.
-
-**Version 2: PTC chamber heater.** Next I tried a PTC heater for the chamber. Neither air-heating approach could melt the slurry. Air moves heat poorly into a dense, metal-filled paste.
+**Version 1: PTC air heating.** The first version heated the air in the build chamber with a PTC heater. A thermistor measured the air temperature, and the control loop assumed the slurry would track it. That assumption proved wrong. Air moves heat poorly into a dense, metal-filled paste, so the air could be at temperature while the slurry stayed solid.
 
 <div class="img-placeholder">
-  <strong>Image placeholder:</strong> photo of the chamber air heating setup (silicone pads and/or PTC heater).<br>
-  Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v1_v2_chamber.jpg</code>
+  <strong>Image placeholder:</strong> photo of the PTC chamber heater and the air thermistor.<br>
+  Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v1_ptc.jpg</code>
 </div>
 <div class="caption">
-    Fig. 11. Versions 1 and 2: heating the chamber air.
+    Fig. 11. Version 1: heating the chamber air with a PTC heater.
 </div>
 
-**Version 3: heat the reservoir walls and measure the slurry directly.** This is the current setup:
+**Version 2: measure the slurry, heat the reservoir walls.** Version 2 fixed what the loop measures and where the heat goes:
 
-- Polyimide film heaters bonded to the reservoir walls are PID-controlled by the Teensy.
-- The control signal comes from an MLX90614 infrared thermometer (the narrow 5° field-of-view variant) aimed at the slurry surface, so the loop tracks the material rather than the air. If its reading goes stale for 60 s, the heater shuts off.
-- A thermistor on the reservoir wall acts as a safety clamp, because the film heaters can get hotter than the slurry is allowed to.
-- The PTC heater stays on as background warmth.
-- The recoater blade has its own heater and two thermistors, one on the heater block and one at the blade front.
+- The control sensor changed from the air thermistor to an MLX90614ESF-DCI infrared thermometer (the narrow 5° field-of-view variant) aimed at the slurry surface, so the loop tracks the material itself. If its reading goes stale for 60 s, the heater shuts off.
+- Adhesive polyimide heater pads went onto the reservoir walls, powered and PID-controlled through the terminals the PTC heater had used.
+- The PTC heater was switched to always on, for background warmth.
+- The old thermistor moved onto the reservoir wall as a safety clamp, because wall heaters can get hotter than the slurry is allowed to.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
         <div class="img-placeholder">
-          <strong>Image placeholder:</strong> photo of the reservoir with polyimide film heaters bonded to its walls.<br>
-          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v3_reservoir.jpg</code>
+          <strong>Image placeholder:</strong> photo of the reservoir with the polyimide heater pads on its walls.<br>
+          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v2_polyimide.jpg</code>
         </div>
     </div>
     <div class="col-sm mt-3 mt-md-0">
         <div class="img-placeholder">
-          <strong>Image placeholder:</strong> photo of the IR thermometer mounted above the slurry, and/or the heated recoater blade.<br>
-          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v3_ir_recoater.jpg</code>
+          <strong>Image placeholder:</strong> photo of the MLX90614 IR thermometer mounted above the slurry.<br>
+          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v2_ir_sensor.jpg</code>
         </div>
     </div>
 </div>
 <div class="caption">
-    Fig. 12. Version 3. Left: film heaters on the reservoir walls. Right: IR sensing and the heated recoater.
+    Fig. 12. Version 2. Left: polyimide heater pads on the reservoir walls. Right: the IR thermometer aimed at the slurry.
 </div>
 
-Version 3 got the control strategy right but not the power. I ran heat-conduction simulations of warm-up time across wall temperatures, reservoir sizes, slurry melting points, and three-wall versus four-wall heating. Because the reservoir shares a wall with the build chamber, only three of its walls can be heated. The simulations and the testing agreed: four 7 W film pads were simply underpowered. This was a power problem, not a firmware bug.
+Version 2 got the control strategy right but not the power. I ran heat-conduction simulations of warm-up time across wall temperatures, reservoir sizes, slurry melting points, and three-wall versus four-wall heating. Because the reservoir shares a wall with the build chamber, only three of its walls can be heated. The simulations and the machine agreed: the polyimide pads did not have enough power. This was a power problem, not a firmware bug.
 
-**Version 4 (next): mains cartridge heaters.** The next step is roughly 100 W cartridge heaters (8 mm diameter) in blocks on the reservoir, on a mains circuit switched by an SSR from the existing 12 V control signal. Each block gets its own earth, thermal fuses, and thermal adhesive rated for the temperature, with care taken to avoid local hot spots. A dark radiant plate over the slurry is also being considered as a top heater.
+**Version 3: mains cartridge heaters.** The current version uses four 100 W, 110 V cartridge heaters. They sit in fittings I machined from aluminum linear-rail shaft supports, and the fittings are bonded to the reservoir walls with JB Weld. The heaters run from wall power. The 12 V signal that drove the polyimide pads now switches a solid-state relay (SSR), which in turn switches the heaters, so the Teensy's control loop and the IR sensing carried over unchanged.
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        <div class="img-placeholder">
+          <strong>Image placeholder:</strong> photo of the machined shaft-support fittings with cartridge heaters, bonded to the reservoir walls.<br>
+          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v3_cartridges.jpg</code>
+        </div>
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        <div class="img-placeholder">
+          <strong>Image placeholder:</strong> photo of the SSR and mains wiring for the heaters (or a before/after of a shaft support being machined into a fitting).<br>
+          Suggested file: <code>assets/img/projects/personal/lmm_printer/heating_v3_ssr.jpg</code>
+        </div>
+    </div>
+</div>
+<div class="caption">
+    Fig. 13. Version 3. Left: cartridge heaters in machined fittings on the reservoir. Right: SSR switching from wall power.
+</div>
+
+The recoater blade is heated separately, with its own heater and two thermistors, one on the heater block and one at the blade front.
 
 ### Post-Processing: Debinding and Sintering
 
-For sintering, I have converted a VEVOR tabletop kiln (rated to about 1,200 °C) with a ramp/soak PID controller. That lets an off-the-shelf melting kiln run the slow, staged heating profiles that debinding and sintering need. Parts are packed in activated carbon inside an alumina crucible, and the carbon consumes the oxygen around the part. At 1,200 °C this setup suits copper and bronze. Since the printer has not made a green part yet, the kiln has not fired a printed part either.
+For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My first attempt kept the stock controller and drove it with my own firmware that pressed its buttons. That turned out to be a dead end: the button presses were unreliable, and a kiln that might not do what it was told was potentially unsafe. Instead I removed the stock controller and replaced it with an Auber Instruments ramp/soak PID controller. That lets an off-the-shelf melting kiln run the slow, staged heating profiles that debinding and sintering need. Parts are packed in activated carbon inside an alumina crucible, and the carbon consumes the oxygen around the part. At 1,200 °C this setup suits copper and bronze. Since the printer has not made a green part yet, the kiln has not fired a printed part either.
 
 <div class="img-placeholder">
-  <strong>Image placeholder:</strong> photo of the converted kiln and its controller (and the carbon-packed crucible if you have one).<br>
+  <strong>Image placeholder:</strong> photo of the converted kiln with its Auber controller (and the carbon-packed crucible if you have one).<br>
   Suggested file: <code>assets/img/projects/personal/lmm_printer/kiln.jpg</code>
 </div>
 <div class="caption">
-    Fig. 13. The converted tabletop kiln used for sintering.
+    Fig. 14. The converted tabletop kiln used for sintering.
 </div>
 
 Further out, I plan to build a dedicated 1,500 °C furnace: a cast alumina muffle with silicon carbide heating elements, SCR power control, a type S or B thermocouple, an argon purge at slight positive pressure, and an oxygen-depletion monitor. A 1,500 °C limit covers steel, copper, bronze, and tungsten carbide (WC-Co). Carbide is hard to make in complex shapes any other way, which makes it the most interesting target. Carbon burial works for copper, bronze, and plain steel, but not for carbide, so the argon atmosphere stays in the long-term design.
@@ -310,14 +327,14 @@ There is no finished part yet. Here is where things stand:
 
 - **The machine.** The prototype is built, with the custom PCB, Teensy firmware, and Pi software running together. That includes three-axis motion with homing, projector control, the on-machine GUI, and closed-loop heating with independent safety cutoffs.
 - **The slurry.** Through several formulation iterations, I have arrived at a copper / UV varnish / wax slurry that melts at about 40 °C. I have also identified the powder's packing limit (0.49 tap density) as what caps the metal loading for now.
-- **Heating.** I learned that the slurry has to be heated through the reservoir walls and measured directly, not heated through the air. I also learned that the current film heaters do not deliver enough power.
+- **Heating.** Three heating versions taught me that the slurry has to be measured directly and heated through the reservoir walls, not through the air, and that it takes far more power than the first wall heaters gave. The current version uses four 100 W mains cartridge heaters switched by an SSR.
 
 <div class="img-placeholder">
   <strong>Image placeholder:</strong> any slurry test results worth showing, e.g. a melt test, a spread or drawdown test, or a side-by-side of batches at different loadings.<br>
   Suggested file: <code>assets/img/projects/personal/lmm_printer/results_slurry_tests.jpg</code>
 </div>
 <div class="caption">
-    Fig. 14. Slurry test results.
+    Fig. 15. Slurry test results.
 </div>
 
 ### Lessons Learned
@@ -329,7 +346,7 @@ There is no finished part yet. Here is where things stand:
 
 ### Next Steps
 
-1. Install the mains cartridge heaters on the reservoir and confirm the slurry stays molten through a print.
+1. Confirm the cartridge heaters keep the slurry molten and at a steady temperature through a full print.
 2. Settle the copper loading at 40–45 vol% and tune the dispersant dose. Source spherical powder for higher loadings.
 3. Spread and cure the first layers on the machine, then print the first multi-layer green parts and measure layer quality.
 4. Run the first debinding and sintering cycles in the converted kiln.
