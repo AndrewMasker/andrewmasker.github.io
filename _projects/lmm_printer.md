@@ -35,11 +35,11 @@ figure_dir: assets/img/projects/personal/lmm_printer
   }
 </style>
 
-{% comment %}
+<!--
 Photos: each figure_slot below appears on the live site as soon as its file is in
 assets/img/projects/personal/lmm_printer/ under the listed name. Until then it is hidden
 on the live site and shows as a dashed placeholder in a local preview.
-{% endcomment %}
+-->
 
 Note: This project is a work in progress. The printer has not produced a finished metal part yet. So far the results are the machine itself and a series of slurry tests. This page covers how the process works, how the machine is designed, and what I have learned along the way, and I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
 
