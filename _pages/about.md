@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: andrewimasker@gmail.com. 717-251-0163.
+subtitle: andrewimasker@gmail.com · 717-251-0163
 
 profile:
   align: right
@@ -26,8 +26,10 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am currently a PhD student in Mechanical Engineering and Applied Mechanics on medical leave of absence from the University of Pennsylvania. Alongside the PhD, I am part of the way through a master's in Robotics.
+I am a PhD student in Mechanical Engineering and Applied Mechanics at the University of Pennsylvania and an NSF Graduate Research Fellow. I work in the ScalAR Lab with Dr. Ani Hsieh, and alongside the PhD, I am partway through a master's in Robotics. I am currently on a medical leave of absence from Penn.
 
-I enjoy working on engineering and research projects related to manufacturing, computer architecture, machine learning, and more. Currently I am working on a metal 3d printer and a virtual machine written in the scripting language bash.
+My research is on learned dynamics and physics-informed machine learning for robots. At Penn, I built a [knowledge-based neural ODE model of an underwater robotic arm]({% link _projects/uw_arm.md %}) in JAX on top of differentiable MuJoCo simulation. Before that, as an undergraduate in Dr. Samuel Grauer's lab at Penn State, I developed [Neural Optical Flow]({% link _projects/neural_optical_flow.md %}), a neural method for measuring fluid flows from images, which became my honors thesis and a paper in _Experiments in Fluids_. I am looking for roles in robot learning, especially work on vision-language-action models and world action models.
 
-I grew up in Chambersburg and Shippensburg, Pennsylvania where I went to the Career Magnet School. I got my bachelor's degree in Mechanical Engineering from the Pennsylvania State University Schreyer Honors College where I did my thesis on Neural Optical Flow in Dr. Samuel Grauer's Lab. Currently, I am a PhD student in the ScalAR Lab with Dr. Ani Hsieh at the University of Pennsylvania, currently on medical leave of absence.
+I also enjoy engineering projects across manufacturing, computer architecture, and machine learning, and I like building things end to end, from CAD and circuit boards to firmware and software. Right now, I am building a [low-cost metal 3D printer]({% link _projects/lmm_printer.md %}) and [Bashputer]({% link _projects/bashputer.md %}), a 64-bit virtual machine written entirely in Bash.
+
+I grew up in Chambersburg and Shippensburg, Pennsylvania, where I went to the Career Magnet School. I earned my bachelor's degree in Mechanical Engineering from the Pennsylvania State University's Schreyer Honors College.

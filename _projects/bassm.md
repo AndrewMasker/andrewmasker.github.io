@@ -3,12 +3,16 @@ layout: page
 title: Bassm
 description: an assembly language and assembler for the Bashputer, also written in Bash
 img: assets/img/projects/personal/bassm/bassm_thumbnail.png
-importance: 2
+importance: 3
 category: personal
 related_publications: false
 ---
 
 Note: Bassm is the assembly language for my <a href="{% link _projects/bashputer.md %}">Bashputer</a> virtual machine, so that page is the place to start if you haven't seen it. The assembler is in the `Assembler` folder of the repo <a href="https://github.com/AndrewMasker/Bashputer">here</a>, and the full language reference is the <a href="https://github.com/AndrewMasker/Bashputer/blob/master/docs/assembly-language.md">assembly language guide</a>.
+
+### Useful Skills Learned/Used
+
+Assembler design, macro preprocessing, Bash, low-level performance optimization, VS Code extensions, TextMate grammars
 
 ### Overview
 
@@ -29,7 +33,7 @@ The assembler runs in three stages, each its own script:
 2. The **processor** assigns an address to every statement, resolves labels, and evaluates arithmetic.
 3. The **hexer** encodes each statement as bytes, using a table of opcodes and operand sizes.
 
-The following commands will assemble `MyProgram.bassm` and output the cartridge as `src/Cartridges/MyProgram`. Running it with `-k` keeps the output of each stage, which is the quickest way to see what a macro actually expanded to.
+The following command assembles `MyProgram.bassm` and outputs the cartridge as `src/Cartridges/MyProgram`. Running it with `-k` keeps the output of each stage, which is the quickest way to see what a macro actually expanded to.
 
 ```bash
 bash Assembler/assembler.sh MyProgram.bassm -o src/Cartridges/MyProgram
@@ -42,7 +46,7 @@ The output is a cartridge, which is just a named folder containing a plain-text 
 0x0000000000000010 0x67 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x28 0x1F 0x1F 0x06 0x48 0x00 0x00 0x00
 ```
 
-Run the computer with a cartridge to load as ROM with the following command.
+To run the computer with that cartridge loaded as ROM, use the following command:
 
 ```bash
 src/run.sh MyProgram
@@ -164,7 +168,7 @@ def r_width = r34
 lib $r_width , $width
 ```
 
-Substitutions can also be undefined using undef:
+Substitutions can also be undefined using `undef`{:.language-bassm}:
 
 ```bassm
 def r_A = r1
@@ -176,9 +180,9 @@ lib $r_A , 15 # Does not work
 
 ### Macros
 
-A substitution with `@`{:.language-bassm} parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, as it is simple textual replacement. That includes whole blocks of statements along with mnemonics, so one macro can work with several different instructions. If a macro defines labels is automatically wrapped in its own anonymous scope, so that multiple uses do not cause conflicting label names.
+A substitution with `@`{:.language-bassm} parameters is a macro, and arguments are passed by name in square brackets. An argument can contain anything, as it is simple textual replacement. That includes whole blocks of statements along with mnemonics, so one macro can work with several different instructions. If a macro defines labels, it is automatically wrapped in its own anonymous scope, so that multiple uses do not cause conflicting label names.
 
-Given that the parameters are replaced with text substitution, the macros wind up being very powerful and allow for nicely structured code. For example, it is possible to build structured control flow on top of raw branches. Below is the `when`{:.language-bassm} macro from my Snake program, along an example of its use. Passing `is=eq`{:.language-bassm} drops an `eq`{:.language-bassm} comparison into the macro body, and `do=`{:.language-bassm} takes the block of code to run:
+Given that the parameters are replaced with text substitution, the macros wind up being very powerful and allow for nicely structured code. For example, it is possible to build structured control flow on top of raw branches. Below is the `when`{:.language-bassm} macro from my Snake program, along with an example of its use. Passing `is=eq`{:.language-bassm} drops an `eq`{:.language-bassm} comparison into the macro body, and `do=`{:.language-bassm} takes the block of code to run:
 
 ```bassm
 # when[reg= , is= , val= , do=] - does @do if @reg is @is to the value in @val else does nothing
@@ -195,7 +199,7 @@ def when =
 lib r1 , 5
 lib r2 , 5
 
-# Will call to print_message and then do the code defined in $do_some_inline_code
+# Will call print_message and then do the code defined in $do_some_inline_code
 $when[reg=r1 , is=eq , val=r2 , do={cali :print_message; $do_some_inline_code}]
 
 # Will not do what is in the do block, as r1 is not less than r2

@@ -3,7 +3,7 @@ layout: page
 title: Bashputer
 description: a 64-bit computer built entirely in Bash
 img: assets/img/projects/personal/bashputer/Maze.gif
-importance: 1
+importance: 2
 category: personal
 related_publications: false
 ---
@@ -90,6 +90,10 @@ related_publications: false
 </style>
 
 Note: The source code is on GitHub <a href="https://github.com/AndrewMasker/Bashputer">here</a>, and you can run Bashputer in your browser <a href="https://andrewmasker.github.io/webvm/">here</a>. Read [Try it online](#try-it-online) first, though, since it is very slow in the browser.
+
+### Useful Skills Learned/Used
+
+Bash, computer architecture, instruction set design, memory-mapped IO, inter-process communication with named pipes, terminal graphics with ANSI escape codes, sandboxing with bubblewrap, WebVM
 
 ### Introduction / Motivation
 
@@ -248,9 +252,9 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 | **JMP** | : | JMP rA | - | Jumps to the address in rA. |
 | **BZ** | : | BZ rA, rB | - | If rA is zero, jumps to the address in rB. |
 | **BNZ** | : | BNZ rA, rB | - | If rA is not zero, jumps to the address in rB. |
-| **JMPI** | : | JMPI imm64 | - | Jumps to the 64 bit immediate address. |
-| **BZI** | : | BZI rA, imm64 | - | If rA is zero, jumps to the 64 bit immediate address. |
-| **BNZI** | : | BNZI rA, imm64 | - | If rA is not zero, jumps to the 64 bit immediate address. |
+| **JMPI** | : | JMPI imm64 | - | Jumps to the 64-bit immediate address. |
+| **BZI** | : | BZI rA, imm64 | - | If rA is zero, jumps to the 64-bit immediate address. |
+| **BNZI** | : | BNZI rA, imm64 | - | If rA is not zero, jumps to the 64-bit immediate address. |
 {: .isa-table}
 
 </div>
@@ -262,7 +266,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 | **PSH[B/Q/H/W]** | : | PSH[B/Q/H/W] rA | - | Pushes the low bytes of rA, of the given size, onto the stack and moves the stack pointer up. |
 | **POP[B/Q/H/W]** | : | POP[B/Q/H/W] rA | - | Pops a value of the given size off of the stack into rA (zero-extended) and moves the stack pointer down. |
 | **SSP** | : | SSP rA | - | Sets the stack pointer to the value in rA. |
-| **SSPI** | : | SSPI imm64 | - | Sets the stack pointer to the 64 bit immediate value. |
+| **SSPI** | : | SSPI imm64 | - | Sets the stack pointer to the 64-bit immediate value. |
 | **XSP** | : | XSP rA | - | Swaps the stack pointer with the value in rA. |
 {: .isa-table}
 
@@ -273,7 +277,7 @@ All jump, branch, and call targets are relative to the jump origin register JO, 
 <div style="margin-left:2rem" markdown="1">
 
 | **CAL** | : | CAL rA | - | Pushes the return address onto the stack, then jumps to the address in rA. |
-| **CALI** | : | CALI imm64 | - | Pushes the return address onto the stack, then jumps to the 64 bit immediate address. |
+| **CALI** | : | CALI imm64 | - | Pushes the return address onto the stack, then jumps to the 64-bit immediate address. |
 | **RET** | : | RET | - | Pops the return address off of the stack and jumps to it. |
 {: .isa-table}
 
@@ -310,7 +314,7 @@ Programs for the Bashputer are written in Bassm, an assembly language with macro
 
 Bashputer is a surprisingly capable machine given that it is written entirely in Bash. That isn't to say it is fast (it is actually quite slow), but it has a rich enough set of features to allow for some interesting and fun programs.
 
-Below you can see two versions of Snake written for the Bashputer in <a href="{% link _projects/bassm.md %}">Bassm</a>. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes reduce the total number of clock cycles and bus accesses: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
+Below you can see two versions of Snake written for the Bashputer in <a href="{% link _projects/bassm.md %}">Bassm</a>. The left version was written entirely by me, and is the result of a few rounds of optimization to get it to a decent speed that isn't agonizing to play. The right is a version of my code that was optimized by Claude. It inlines most of the code rather than using calls and returns, avoids most immediate-mode loads and jumps, and uses a different erase-and-grow strategy over the ring buffer I implemented. Each of those changes reduces the total number of clock cycles and bus accesses: a `CALI` followed by a `RET` costs 26 clock cycles, and a `JMPI` costs 9 where a register `JMP` costs only 2. Together they speed the game up to the point that it is actually decently challenging, which shows that a fast program can be achieved even on a machine this slow with proper optimization.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -335,7 +339,7 @@ The repo also includes a Fibonacci printer that I wrote, along with a few progra
     </div>
 </div>
 <div class="caption">
-    Fig. 2. The Maze cartridge, written by Claude, generating endless rainbow mazes.
+    Fig. 2. Left: FastPong, a faster rebuild of two-player Pong. Right: the Maze cartridge generating endless rainbow mazes. Both were written by Claude.
 </div>
 
 ### Try It Online
@@ -350,7 +354,7 @@ bash src/Computer/computer.sh Snake
 
 Cartridge names are case-sensitive, and the available ones are in `src/Cartridges/`. In the browser the computer is started with `computer.sh` directly instead of `run.sh`, since bubblewrap isn't available there (and the VM is already a sandbox anyway).
 
-Getting the Bashputer to run in WebVM took a couple of workarounds. The clock paces the computer by waiting on `read` with a timeout, and in Bash 5.0 those timeouts are implemented with `SIGALRM`, which never fires under WebVM's x86 emulator. The image uses Debian Bookworm instead, whose Bash 5.2 implements the timeouts with `pselect()`, which does work. Bookworm's `mkfifo`, however, uses a system call the emulator doesn't implement, so the image also ships a tiny replacement `mkfifo` written in C that uses `mknod` instead.
+Getting the Bashputer to run in WebVM took a couple of workarounds. The clock paces the computer by waiting on `read` with a timeout. In Bash 5.0, which comes with WebVM's default Debian Buster image, those timeouts are implemented with `SIGALRM`, which never fires under WebVM's x86 emulator. My image uses Debian Bookworm instead, whose Bash 5.2 implements the timeouts with `pselect()`, which does work. Bookworm's `mkfifo`, however, uses a system call the emulator doesn't implement, so the image also ships a tiny replacement `mkfifo` written in C that uses `mknod` instead.
 
 ### Implementation
 
