@@ -6,23 +6,9 @@ img: assets/img/projects/personal/lmm_printer/thumbnail.png
 importance: 3
 category: personal
 related_publications: false
-figure_dir: assets/img/projects/personal/lmm_printer
 ---
 
 <style>
-  /* Placeholder boxes from _includes/figure_slot.liquid. They only render in a local preview, never on the live site. */
-  .img-placeholder {
-    border: 2px dashed var(--global-text-color-light);
-    border-radius: 0.5rem;
-    padding: 2.5rem 1rem;
-    margin-top: 1rem;
-    text-align: center;
-    color: var(--global-text-color-light);
-    font-size: 0.9rem;
-  }
-  .img-placeholder code {
-    font-size: 0.8rem;
-  }
   /* Borderless spec tables */
   .spec-table {
     width: 100%;
@@ -35,15 +21,19 @@ figure_dir: assets/img/projects/personal/lmm_printer
   }
 </style>
 
-<!--
-Photos: each figure_slot below appears on the live site as soon as its file is in
-assets/img/projects/personal/lmm_printer/ under the listed name. Until then it is hidden
-on the live site and shows as a dashed placeholder in a local preview.
--->
-
 Note: This project is a work in progress, and the printer has not produced a finished metal part yet. So far the results are the machine itself, a series of slurry tests, and some test runs of the printer. This page covers how the process works, how the machine is designed, and what I have learned along the way. I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
 
-{% include figure_slot.liquid file="Printer_Hero.jpg" width="5" file2="CAD_Full_Perspective.png" width2="7" caption="The current prototype (left) and the full machine in Onshape (right)." %}
+<div class="row justify-content-sm-center">
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 0.562 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Printer_Hero.jpg" title="LMM printer prototype" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 0.852 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/CAD_Full_Perspective.png" title="Full machine in Onshape" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 1. The current prototype (left) and the full machine in Onshape (right).
+</div>
 
 ### Useful Skills Learned/Used
 
@@ -71,7 +61,14 @@ A piston pushes slurry up out of a heated reservoir, and a heated recoater blade
 
 To become metal, the green part must be debound and then sintered. In the two-step approach, a solvent (like heptane) first dissolves the wax, leaving the cured resin intact while opening up pore channels, and thermal debinding then burns out the remaining resin. Alternatively, one may skip the solvent step entirely and remove the wax thermally as well, in the same slow heating cycle that burns out the resin; thermal-only debinding is the plan for my first runs. Finally, the part is sintered in a furnace, where the powder fuses into dense metal and the part shrinks.
 
-{% include figure_slot.liquid file="process_diagram.png" alt="Cross-section schematic of the printer next to the debinding and sintering steps" caption="The LMM process (schematic, not to scale). Left: printing a green part, with numbers matching the layer steps above. Right: turning it into metal." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/process_diagram.png" title="Cross-section schematic of the printer next to the debinding and sintering steps" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 2. The LMM process (schematic, not to scale). Left: printing a green part, with numbers matching the layer steps above. Right: turning it into metal.
+</div>
 
 ### Machine Design
 
@@ -84,19 +81,53 @@ I designed the machine in Onshape with the goal of keeping it buildable in a sma
   <tr><td>Recoater</td><td>Heated blade sweeps slurry across the deck</td><td>8 mm/rev</td><td>~200 mm</td></tr>
 </table>
 
-{% include figure_slot.liquid file="Piston_Section_View_Perspective.png" width="4" caption="Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above." %}
+<div class="row justify-content-sm-center">
+    <div class="col-sm-4 mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Piston_Section_View_Perspective.png" title="Section view of the machine" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 3. Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above.
+</div>
 
 The build deck is a fixed aluminum plate with two rectangular openings, one for the reservoir and one for the build platform. I originally considered a removable top plate that could be swapped for one with smaller openings in order to waste less feedstock on small prints, but I ended up dropping it. It added quite a bit of of complexity and a similar idea may already be patented; that of course wouldn't have stopped a one-off build that isn't for sale, but it didn't really fit the spirit of the project. The reservoir is about 130 × 70 mm and shares one long wall with the build chamber, which became important later on when heating the slurry turned out to be the hardest problem on the machine (see [Heating the Slurry](#heating-the-slurry)).
 
-{% include figure_slot.liquid file="Chamber_View_General_Recoater_PTC_Heater.jpg" file2="Recoater_Close_Up.png" caption="The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD." %}
+<div class="row justify-content-sm-center">
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.778 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Chamber_View_General_Recoater_PTC_Heater.jpg" title="Build deck on the machine" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.691 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Recoater_Close_Up.png" title="Recoater carriage in CAD" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 4. The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD.
+</div>
 
 The reservoir piston and the build platform each move vertically inside their own opening. Originally, each one was guided by V-wheels pressed into the corners of its opening, which unfortunately proved unreliable in several ways. I replaced the wheels with a slightly oversized TPU fitting around each platform, which constrains its motion against the walls. In a future build, it may make sense to replace this with a machines PTFE fitting.
 
-{% include figure_slot.liquid file="V-Wheel_Aligner_Section_Perspective.png" file2="TPU_Aligner_Section_Perspective.png" caption="Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/V-Wheel_Aligner_Section_Perspective.png" title="V-wheel platform guidance" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/TPU_Aligner_Section_Perspective.png" title="TPU platform guidance" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 5. Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them.
+</div>
 
 The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560 × 1440 pixels). I chose DLP over an LCD mask because an LCD has to sit essentially in contact with the material, which would likely prove difficult with a paste. There is also the issue of green part strength being very low, which may result in breaking due to suction between the LCD and the slurry. On the other hand, a projector works from a distance and keeps the optics clear of the heat which is quite desireable for this build. I measured the Mars 4 DLP and worked out the mounting geometry (throw distance, projector position, and focus) in CAD from those measurements.
 
-{% include figure_slot.liquid file="Projector_Aa_Visual_Prspective.png" caption="The projector mount above the deck. The pink lines trace the light path through the glass window in the top plate onto the build platform." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Projector_Aa_Visual_Prspective.png" title="Projector mount and light path" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 6. The projector mount above the deck. The pink lines trace the light path through the glass window in the top plate onto the build platform.
+</div>
 
 ### Electronics
 
@@ -106,15 +137,52 @@ Control is split between two boards. A Raspberry Pi Zero W runs the print job, d
 
 I first built the electronics on breadboards with off-the-shelf modules (the Teensy, the Pi, DRV8825 stepper driver carriers, and so on) to prove out the architecture and firmware. During that phase I measured the chamber air and the recoater blade with DS18B20 digital temperature sensors; however, reading them caused hitches in the motor movement, so I switched over to analog thermistors.
 
-{% include figure_slot.liquid file="Motor_Control_Prototype_Electronics_Closeup.jpg" file2="Pi_Breakout_And_Thermistor_Prototype_Electronics.jpg" caption="The breadboard prototype. Left: stepper drivers and motor control. Right: the Raspberry Pi breakout and thermistor circuits." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Motor_Control_Prototype_Electronics_Closeup.jpg" title="Breadboard motor control" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Pi_Breakout_And_Thermistor_Prototype_Electronics.jpg" title="Breadboard Pi breakout and thermistors" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 7. The breadboard prototype. Left: stepper drivers and motor control. Right: the Raspberry Pi breakout and thermistor circuits.
+</div>
 
 Once the prototype worked, I designed a carrier PCB in KiCad and had it made by JLCPCB. The PCB holds everything the breadboards did, but in a form that is less of a nest of jumper wires.
 
-{% include figure_slot.liquid file="Prototype_Electronics.jpg" file2="PCB_Front_View.jpg" caption="On top of the machine. Left: the breadboard prototype. Right: the custom PCB that replaced it, with the Pi, the GUI screen, and the rotary encoder." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Prototype_Electronics.jpg" title="Breadboard prototype on the machine" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/PCB_Front_View.jpg" title="Custom PCB on the machine" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 8. On top of the machine. Left: the breadboard prototype. Right: the custom PCB that replaced it, with the Pi, the GUI screen, and the rotary encoder.
+</div>
 
-{% include figure_slot.liquid file="KiCad_Schematic.png" caption="The board schematic in KiCad." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/KiCad_Schematic.png" title="KiCad schematic" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 9. The board schematic in KiCad.
+</div>
 
-{% include figure_slot.liquid file="KiCad_PCB_View.png" file2="KiCad_PCB_3D_View.png" caption="The PCB in KiCad. Left: the layout. Right: the 3D view." %}
+<div class="row justify-content-sm-center">
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.462 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/KiCad_PCB_View.png" title="KiCad PCB layout" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.301 1 0%;">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/KiCad_PCB_3D_View.png" title="KiCad PCB 3D view" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 10. The PCB in KiCad. Left: the layout. Right: the 3D view.
+</div>
 
 The PCB carries:
 
@@ -127,7 +195,17 @@ The PCB carries:
 
 Bringing up the board actually taught me quite a lot about soldering and troubleshooting electronics. On first power-up, the 5 V rail measured 12 V, which wound up being a feedback resistor that had never been soldered, so the regulator was running flat out. There were also a few other things that needed to be troubleshooted, like a pair of swapped heater pins, a limit switch missing its pull-up, and a projector interrupt pin that had moved, all of which have since been fixed physically or from firmware.
 
-{% include figure_slot.liquid file="PCB_Not_Assembled.jpg" file2="PCB_Top_View.jpg" caption="Left: the bare board from JLCPCB. Right: assembled, with the Teensy, Pi, and stepper drivers in place." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/PCB_Not_Assembled.jpg" title="Bare PCB" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/PCB_Top_View.jpg" title="Assembled PCB" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 11. Left: the bare board from JLCPCB. Right: assembled, with the Teensy, Pi, and stepper drivers in place.
+</div>
 
 #### Firmware and Software
 
@@ -147,7 +225,14 @@ The Pi runs a Python package, `lmm_printer`:
 
 The projector is driven over SPI using code from the open-source <a href="https://github.com/openMLA/elegoo-mars-4-dlp-controller">openMLA Elegoo Mars 4 DLP controller</a> project, which is vendored into the repository under its MIT license. Many thanks to the openMLA project for that work and Nemo Andrea for his help.
 
-{% include figure_slot.liquid file="UI_Panel.jpg" caption="The on-machine GUI on the 240 × 240 screen: the main menu, with the status and log panel below it." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/UI_Panel.jpg" title="On-machine GUI" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 12. The on-machine GUI on the 240 × 240 screen: the main menu, with the status and log panel below it.
+</div>
 
 ### The Slurry
 
@@ -170,7 +255,17 @@ Every batch so far uses 325-mesh copper powder and stearic acid as a dispersant 
 
 The first three formulas mapped out the basic trade-off with off-the-shelf printer resin; adding resin lowered the melting point but raised the viscosity, while adding wax did the reverse. That pointed to two changes, a lower-melting wax and a lower-viscosity UV-curable liquid. Coconut wax and UV ink (the kind used in UV printers) filled those roles starting with formula 4. By formula 6, coconut wax had fully replaced the 122 °F blend, which gave the best mix so far. Formula 7 cuts the wax further in an attempt to lower the melting point.
 
-{% include figure_slot.liquid file="Current_Slurry_Room_Temp_Spread.mp4" file2="Current_Slurry_Heated.mp4" caption="The current slurry. Left: at room temperature it is a spreadable solid like slightly softened butter. Right: warmed, it spreads into a smooth layer." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include video.liquid path="assets/img/projects/personal/lmm_printer/Current_Slurry_Room_Temp_Spread.mp4" class="img-fluid rounded" autoplay=true muted=true loop=true %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include video.liquid path="assets/img/projects/personal/lmm_printer/Current_Slurry_Heated.mp4" class="img-fluid rounded" autoplay=true muted=true loop=true %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 13. The current slurry. Left: at room temperature it is a spreadable solid like slightly softened butter. Right: warmed, it spreads into a smooth layer.
+</div>
 
 #### Powder Loading
 
@@ -178,7 +273,14 @@ The first four formulas were all at 50 vol% copper, and they were quite thick. T
 
 The dispersant dose is also worth revisiting. In these formulas, stearic acid works out to roughly 0.3–0.6% of the powder mass, while a rough estimate of a stearic-acid monolayer on this copper puts the need at only about 0.02–0.1%. Rather than assuming that more is better, the plan is to test a range.
 
-{% include figure_slot.liquid file="Early_Reduced_Powder_Vol_Spread_Test.mp4" caption="An early spread test after lowering the copper loading." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include video.liquid path="assets/img/projects/personal/lmm_printer/Early_Reduced_Powder_Vol_Spread_Test.mp4" class="img-fluid rounded" autoplay=true muted=true loop=true %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 14. An early spread test after lowering the copper loading.
+</div>
 
 ### Heating the Slurry
 
@@ -186,7 +288,14 @@ The slurry is solid at room temperature, so heat is what makes it printable, but
 
 **Version 1: PTC air heating.** The first version heated the air in the build chamber with a PTC heater, with a thermistor measuring the air temperature and the control loop assuming that the slurry would track it. That assumption unfortunately proved wrong. Air moves heat poorly into a dense, metal-filled paste, so the air could be sitting at temperature while the slurry stayed solid.
 
-{% include figure_slot.liquid file="Air_Thermistor_Housing_with_Heatsink_Fins.jpg" caption="Version 1: the air thermistor, in a finned housing on the underside of the top plate next to the projector window. The PTC heater and fan are on the right of the deck photo above." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Air_Thermistor_Housing_with_Heatsink_Fins.jpg" title="Air thermistor housing" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 15. Version 1: the air thermistor, in a finned housing on the underside of the top plate next to the projector window. The PTC heater and fan are on the right of the deck photo above.
+</div>
 
 **Version 2: measure the slurry, heat the reservoir walls.** Version 2 fixed what the loop measures and where the heat goes:
 
@@ -195,15 +304,42 @@ The slurry is solid at room temperature, so heat is what makes it printable, but
 - The PTC heater was switched to always on, for background warmth.
 - The old air thermistor moved onto the reservoir wall as a safety limit, because wall heaters can get hotter than the slurry is allowed to.
 
-{% include figure_slot.liquid file="IR_Therm_Far_View.jpg" file2="IR_Therm_Closeup.jpg" caption="Version 2: the IR thermometer. Left: on the underside of the top plate next to the projector window, looking down at the slurry. Right: close-up of its housing." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/IR_Therm_Far_View.jpg" title="IR thermometer mounted above the slurry" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/IR_Therm_Closeup.jpg" title="IR thermometer close-up" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 16. Version 2: the IR thermometer. Left: on the underside of the top plate next to the projector window, looking down at the slurry. Right: close-up of its housing.
+</div>
 
 Version 2 got the control strategy right, but not the power. Because the reservoir shares a wall with the build chamber, only three of its walls can be heated. Some rough heat-conduction estimates of warm-up time (across wall temperatures, reservoir sizes, slurry melting points, and three-wall versus four-wall heating) matched what the machine showed; the polyimide pads simply did not have enough power.
 
 **Version 3: mains cartridge heaters.** The current version uses four 100 W, 110 V cartridge heaters running from wall power. They sit in fittings I machined from aluminum linear-rail shaft supports, which are bonded to the reservoir walls with JB Weld. The 12 V signal used to drive the polyimide pads now switches a solid-state relay (SSR), which in turn switches the heaters, so the Teensy's control loop and the IR sensing carried over unchanged. The wall thermistor still acts as the safety limit, and the firmware only lets the heaters run while the wall reads between 0 and 100 °C. That way an overheating wall, or a shorted or open sensor reading outside that window, cuts the power.
 
-{% include figure_slot.liquid file="Cartridge_Heater_Front.jpg" file2="Cartridge_Heater_Side_And_Safetry_Therm.jpg" caption="Version 3: cartridge heaters in fittings machined from shaft supports and JB-Welded to the reservoir. Left: the front wall. Right: a side wall, with the safety thermistor." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Cartridge_Heater_Front.jpg" title="Cartridge heaters, front wall" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Cartridge_Heater_Side_And_Safetry_Therm.jpg" title="Cartridge heaters and safety thermistor, side wall" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 17. Version 3: cartridge heaters in fittings machined from shaft supports and JB-Welded to the reservoir. Left: the front wall. Right: a side wall, with the safety thermistor.
+</div>
 
-{% include figure_slot.liquid file="SSR_Wiring.jpg" caption="The solid-state relay and mains inlet that switch the cartridge heaters from wall power." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/SSR_Wiring.jpg" title="SSR and mains wiring" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 18. The solid-state relay and mains inlet that switch the cartridge heaters from wall power.
+</div>
 
 This version works, and the cartridge heaters keep the slurry molten throughout printing. In fact, it worked a little too well; on one test run the slurry got runny enough to drain out through a previously unused screw hole in the reservoir, so that hole is now filled with JB Weld.
 
@@ -215,7 +351,17 @@ For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My 
 
 Parts are packed in activated carbon inside an alumina crucible, where the carbon consumes the oxygen around the part. At 1,200 °C, this setup suits copper and bronze. Of course, since the printer has not made a green part yet, the kiln has not fired a printed part either.
 
-{% include figure_slot.liquid file="Kiln.jpg" file2="Kiln_Controller_Closeup.jpg" caption="Left: the converted VEVOR kiln. Right: the Auber ramp/soak controller that replaced the stock one." %}
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Kiln.jpg" title="Converted VEVOR kiln" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Kiln_Controller_Closeup.jpg" title="Auber ramp/soak controller" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Fig. 19. Left: the converted VEVOR kiln. Right: the Auber ramp/soak controller that replaced the stock one.
+</div>
 
 Further out, I plan to build a dedicated 1,500 °C furnace with a cast alumina muffle, silicon carbide heating elements, SCR power control, a type S or B thermocouple, an argon purge at slight positive pressure, and an oxygen-depletion monitor. A 1,500 °C limit covers steel, copper, bronze, and tungsten carbide (WC-Co), and carbide is the most interesting target of those since it is hard to make in complex shapes any other way. Carbon burial works for copper, bronze, and plain steel, but not for carbide, so the argon atmosphere stays in the long-term design.
 
