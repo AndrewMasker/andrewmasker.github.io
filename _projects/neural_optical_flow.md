@@ -3,12 +3,16 @@ layout: page
 title: Neural Optical Flow
 description: a neural implicit optical flow methodology
 img: assets/img/projects/academic/neural_optical_flow/nof.png
-importance: 1
+importance: 2
 category: academic
 related_publications: true
 ---
 
 Note: If at any point you want more details in a more academic style, see our journal paper on this topic {% cite masker2025neural %} or take a look at my undergraduate thesis {% cite masker2025thesis %}. This page gives an overview of the topic and glosses over most of the rigorous details.
+
+### Useful Skills Learned/Used
+
+PyTorch, neural fields, physics-informed machine learning, inverse problems, optical flow, particle image velocimetry (PIV), stereo imaging, automatic differentiation
 
 ### Background
 
@@ -91,10 +95,10 @@ $$
 0 = \frac{\partial v_x}{\partial x} + \frac{\partial v_y}{\partial y},
 $$
 
-or a smoothness term like the Horn-Schunck regularizer,
+or a smoothness term like the Horn-Schunck regularizer, which is minimized along with the optical flow residual,
 
 $$
-0 = \int \left(|\nabla v_x|^2 + |\nabla v_y|^2 \right) \mathrm{d}A.
+\mathcal{R}_\mathrm{HS} = \int \left(|\nabla v_x|^2 + |\nabla v_y|^2 \right) \mathrm{d}A.
 $$
 
 One may use some combination of additional terms to get a better-behaved result. Interestingly, unlike many ill-posed problems, it is actually quite easy to _see_ the ill-posed nature of this one through the aperture problem, shown in Fig. 5. Observing the motion at just a point (or, in this case, through an aperture with a repeating pattern) is not enough to deduce the actual underlying motion.

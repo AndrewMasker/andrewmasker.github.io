@@ -3,7 +3,7 @@ layout: page
 title: LMM Metal 3D Printer
 description: a low-cost lithography-based metal manufacturing printer (work in progress)
 img: assets/img/projects/personal/lmm_printer/thumbnail.png
-importance: 3
+importance: 1
 category: personal
 related_publications: false
 ---
@@ -41,7 +41,7 @@ Onshape CAD, KiCad PCB design and board bring-up, embedded C++ (Teensy), Python,
 
 ### Background / Motivation
 
-Lithography-based Metal Manufacturing (LMM) is a binder based metal 3D printing technique. A fine metal powder is mixed into a photopolymer binder, which is then cured layer by layer with light, much like a standard resin printer. Afterwards, the binder is removed and the powder is sintered into solid metal. The result is a part with fine detail and smooth surfaces; much closer to metal injection molding (MIM) quality than to laser powder-bed fusion.
+Lithography-based Metal Manufacturing (LMM) is a binder-based metal 3D printing technique. A fine metal powder is mixed into a photopolymer binder, which is then cured layer by layer with light, much like a standard resin printer. Afterwards, the binder is removed and the powder is sintered into solid metal. The result is a part with fine detail and smooth surfaces, much closer to metal injection molding (MIM) quality than to laser powder-bed fusion.
 
 Unfortunately, commercial LMM machines, such as those from Incus, are priced for industrial labs, even though the hardware the process actually needs is fairly simple: a projector, a few lead-screw axes, and some heaters. I am building this printer mostly to experiment with the process, but also to show that these machines can be made cheaply.
 
@@ -90,7 +90,7 @@ I designed the machine in Onshape with the goal of keeping it buildable in a sma
     Fig. 3. Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above.
 </div>
 
-The build deck is a fixed aluminum plate with two rectangular openings, one for the reservoir and one for the build platform. I originally considered a removable top plate that could be swapped for one with smaller openings in order to waste less feedstock on small prints, but I ended up dropping it. It added quite a bit of of complexity and a similar idea may already be patented; that of course wouldn't have stopped a one-off build that isn't for sale, but it didn't really fit the spirit of the project. The reservoir is about 130 × 70 mm and shares one long wall with the build chamber, which became important later on when heating the slurry turned out to be the hardest problem on the machine (see [Heating the Slurry](#heating-the-slurry)).
+The build deck is a fixed aluminum plate with two rectangular openings, one for the reservoir and one for the build platform. I originally considered a removable top plate that could be swapped for one with smaller openings in order to waste less feedstock on small prints, but I ended up dropping it. It added quite a bit of complexity, and a similar idea may already be patented; that of course wouldn't have stopped a one-off build that isn't for sale, but it didn't really fit the spirit of the project. The reservoir is about 130 × 70 mm and shares one long wall with the build chamber, which became important later on when heating the slurry turned out to be the hardest problem on the machine (see [Heating the Slurry](#heating-the-slurry)).
 
 <div class="row justify-content-sm-center">
     <div class="col-sm-8 mt-3 mt-md-0" style="flex: 1.778 1 0%;">
@@ -104,7 +104,7 @@ The build deck is a fixed aluminum plate with two rectangular openings, one for 
     Fig. 4. The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD.
 </div>
 
-The reservoir piston and the build platform each move vertically inside their own opening. Originally, each one was guided by V-wheels pressed into the corners of its opening, which unfortunately proved unreliable in several ways. I replaced the wheels with a slightly oversized TPU fitting around each platform, which constrains its motion against the walls. In a future build, it may make sense to replace this with a machines PTFE fitting.
+The reservoir piston and the build platform each move vertically inside their own opening. Originally, each one was guided by V-wheels pressed into the corners of its opening, which unfortunately proved unreliable in several ways. I replaced the wheels with a slightly oversized TPU fitting around each platform, which constrains its motion against the walls. In a future build, it may make sense to replace this with a machined PTFE fitting.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -118,7 +118,7 @@ The reservoir piston and the build platform each move vertically inside their ow
     Fig. 5. Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them.
 </div>
 
-The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560 × 1440 pixels). I chose DLP over an LCD mask because an LCD has to sit essentially in contact with the material, which would likely prove difficult with a paste. There is also the issue of green part strength being very low, which may result in breaking due to suction between the LCD and the slurry. On the other hand, a projector works from a distance and keeps the optics clear of the heat which is quite desireable for this build. I measured the Mars 4 DLP and worked out the mounting geometry (throw distance, projector position, and focus) in CAD from those measurements.
+The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560 × 1440 pixels). I chose DLP over an LCD mask because an LCD has to sit essentially in contact with the material, which would likely prove difficult with a paste. There is also the issue of green part strength being very low, which may result in breaking due to suction between the LCD and the slurry. On the other hand, a projector works from a distance and keeps the optics clear of the heat, which is quite desirable for this build. I measured the Mars 4 DLP and worked out the mounting geometry (throw distance, projector position, and focus) in CAD from those measurements.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -193,7 +193,7 @@ The PCB carries:
 - limit-switch inputs and a header for an infrared temperature sensor,
 - an onboard buck regulator that makes the 5 V rail from the 12 V supply.
 
-Bringing up the board actually taught me quite a lot about soldering and troubleshooting electronics. On first power-up, the 5 V rail measured 12 V, which wound up being a feedback resistor that had never been soldered, so the regulator was running flat out. There were also a few other things that needed to be troubleshooted, like a pair of swapped heater pins, a limit switch missing its pull-up, and a projector interrupt pin that had moved, all of which have since been fixed physically or from firmware.
+Bringing up the board actually taught me quite a lot about soldering and troubleshooting electronics. On first power-up, the 5 V rail measured 12 V, which wound up being a feedback resistor that had never been soldered, so the regulator was running flat out. There were also a few other problems to troubleshoot, like a pair of swapped heater pins, a limit switch missing its pull-up, and a projector interrupt pin that had moved, all of which have since been fixed physically or from firmware.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -213,7 +213,7 @@ The Teensy firmware is written in C++:
 
 - Motion uses AccelStepper, and homing has a fast pass, a slow pass, and a back-off.
 - Two time-proportioned PID heater loops (QuickPID) control the reservoir walls and the recoater blade. Each loop has a hard temperature window (for safety), and the heater is only allowed on while its limit sensor reads inside that window. For the reservoir, the limit sensor is a separate thermistor on the wall, not the control sensor.
-- I wrote a bit-banged I2C/SMBus driver for the MLX90614 infrared thermometer, with PEC (CRC-8) checking. Unlike the DS18B20s, I set it up so it only reads while all axes are idle, so sensor reads never make the steppers stutter.
+- I wrote a bit-banged I2C/SMBus driver for the MLX90614 infrared thermometer, with PEC (CRC-8) checking. Unlike the DS18B20s, the MLX90614 only reads while all axes are idle, so sensor reads never make the steppers stutter.
 - A serial command protocol connects it to the Pi.
 
 The Pi runs a Python package, `lmm_printer`:
@@ -269,7 +269,7 @@ The first three formulas mapped out the basic trade-off with off-the-shelf print
 
 #### Powder Loading
 
-The first four formulas were all at 50 vol% copper, and they were quite thick. The copper I am using is 325-mesh irregular powder sold for cold casting, rather than the spherical gas-atomized powder used in industry. I measured its tap-density packing fraction at 0.49, which puts 50 vol% right at its packing limit which explained a lot of the problems I was having with spreadability. Dropping to 40–45 vol% cut the viscosity by a lot, which the later formulas bear out, as formulas 5 and 6 (at 40 and 45 vol%) were the first to spread and flow well. Unfortunately, getting back up toward the 67 vol% target will take spherical powder, which packs much more densely but is incredibly expensive.
+The first four formulas were all at 50 vol% copper, and they were quite thick. The copper I am using is 325-mesh irregular powder sold for cold casting, rather than the spherical gas-atomized powder used in industry. I measured its tap-density packing fraction at 0.49, which puts 50 vol% right at its packing limit, which explained a lot of the problems I was having with spreadability. Dropping to 40–45 vol% cut the viscosity by a lot, which the later formulas bear out, as formulas 5 and 6 (at 40 and 45 vol%) were the first to spread and flow well. Unfortunately, getting back up toward the 67 vol% target will take spherical powder, which packs much more densely but is incredibly expensive.
 
 The dispersant dose is also worth revisiting. In these formulas, stearic acid works out to roughly 0.3–0.6% of the powder mass, while a rough estimate of a stearic-acid monolayer on this copper puts the need at only about 0.02–0.1%. Rather than assuming that more is better, the plan is to test a range.
 
@@ -347,7 +347,7 @@ This version works, and the cartridge heaters keep the slurry molten throughout 
 
 ### Post-Processing: Debinding and Sintering
 
-For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My first attempt kept the stock controller and drove it with my own firmware+hardware controller that pressed its buttons, which turned out to be a dead end as the button presses were entirely unreliable. Instead, I removed the stock controller and replaced it with an Auber Instruments ramp/soak PID controller, which lets an off-the-shelf melting kiln run the slow, staged heating profiles that debinding and sintering need.
+For sintering, I converted a VEVOR tabletop kiln (rated to about 1,200 °C). My first attempt kept the stock controller and drove it with my own firmware-and-hardware controller that pressed its buttons, which turned out to be a dead end as the button presses were entirely unreliable. Instead, I removed the stock controller and replaced it with an Auber Instruments ramp/soak PID controller, which lets an off-the-shelf melting kiln run the slow, staged heating profiles that debinding and sintering need.
 
 Parts are packed in activated carbon inside an alumina crucible, where the carbon consumes the oxygen around the part. At 1,200 °C, this setup suits copper and bronze. Of course, since the printer has not made a green part yet, the kiln has not fired a printed part either.
 
@@ -378,7 +378,7 @@ There is no finished part yet, but here is where things currently stand:
 - **Heat the material, not the air.** A dense metal paste needs conductive heating and a sensor looking at the paste itself.
 - **Powder shape matters as much as binder chemistry.** Cheap irregular powder caps how much metal the slurry can hold, no matter how thin the binder is.
 - **Build safety into the firmware from the start.** Every heater has a hard temperature cutoff (on its own wall thermistor for the reservoir), the IR loop shuts off on stale readings, and all heaters turn off on any error or exit.
-- **Measure before assuming.** Both the 12 V on the 5 V rail and the underpowered heaters looked at first like they might be firmware problems. Careful measurement and simple modeling found the real causes quickly. Had I not done this I would have fried both the teensy and Pi.
+- **Measure before assuming.** Both the 12 V on the 5 V rail and the underpowered heaters looked at first like they might be firmware problems. Careful measurement and simple modeling found the real causes quickly. Had I not done this, I would have fried both the Teensy and the Pi.
 
 ### Next Steps
 
