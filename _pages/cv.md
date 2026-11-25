@@ -18,6 +18,7 @@ nav_order: 4
 
 <section class="cv-panel" id="resume" role="tabpanel" hidden>
   <a class="cv-download" href="https://raw.githubusercontent.com/AndrewMasker/CV_Resume_AIM/build/resume.pdf">Download PDF</a>
+  <a class="cv-download" href="https://raw.githubusercontent.com/AndrewMasker/CV_Resume_AIM/build/resume_two_page.pdf">Two-page version</a>
   <div class="pdf-inline" data-pdf="https://raw.githubusercontent.com/AndrewMasker/CV_Resume_AIM/build/resume.pdf"></div>
 </section>
 

@@ -1,0 +1,24 @@
+{% comment %}
+  Styles for the summary box at the top of each project page. Include this once
+  on a page, then wrap the summary in <div class="project-summary">. Each line is
+  a <p> that starts with a <strong> label (What it is, Result, What I did, Links).
+{% endcomment %}
+<style>
+  .project-summary {
+    border: 1px solid var(--global-divider-color);
+    border-left: 4px solid var(--global-theme-color);
+    border-radius: 0.25rem;
+    padding: 1rem 1.25rem 0.25rem;
+    margin-bottom: 2rem;
+  }
+  .project-summary p {
+    margin-bottom: 0.75rem;
+  }
+  .project-summary .row {
+    margin-bottom: 0.25rem;
+  }
+  .project-summary .caption {
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+</style>
