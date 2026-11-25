@@ -8,7 +8,23 @@ category: academic
 related_publications: true
 ---
 
-Note: If at any point you want more details in a more academic style, see our journal paper on this topic {% cite masker2025neural %} or take a look at my undergraduate thesis {% cite masker2025thesis %}. This page gives an overview of the topic and glosses over most of the rigorous details.
+{% include project_summary_style.liquid %}
+
+<div class="project-summary">
+<p><strong>What it is:</strong> A method for measuring fluid velocity from images of particles carried by a flow (particle image velocimetry, or PIV). It represents the flow as a neural field and solves the full nonlinear optical flow problem, for both single-camera and stereo setups.</p>
+<div class="row justify-content-sm-center">
+    <div class="col-sm-8 mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/academic/neural_optical_flow/2DHIT.webp" title="2D HIT comparison" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    Synthetic 2D turbulence. NOF's velocity error (normalized RMSE of 0.07) is lower than that of cross-correlation (0.23), wavelet optical flow (0.10), and PIV-LiteFlow (0.09).
+</div>
+<p><strong>What I did:</strong> With Ke Zhou (co-first author), I developed the method in PyTorch for planar and stereo PIV. It handles particle displacements of 15 pixels or more, and on a synthetic stereo case it cut the velocity error to 0.28, versus 0.36 to 0.38 for the other methods. I also added a divergence-free constraint and Navier-Stokes residuals, which let it recover pressure directly from the images with an error of 0.08. It became my honors thesis and a paper in <em>Experiments in Fluids</em>.</p>
+<p><strong>Links:</strong> <a href="https://link.springer.com/article/10.1007/s00348-025-04058-1">Paper</a> · <a href="{{ '/assets/pdf/NOF_Planar_Stereo.pdf' | relative_url }}">Paper (PDF)</a> · <a href="{{ '/assets/pdf/Andrew_Masker_Thesis.pdf' | relative_url }}">Thesis (PDF)</a></p>
+</div>
+
+Note: This page gives an overview of the topic and glosses over most of the rigorous details. For those, see our journal paper on this topic {% cite masker2025neural %} or my undergraduate thesis {% cite masker2025thesis %}.
 
 ### Useful Skills Learned/Used
 

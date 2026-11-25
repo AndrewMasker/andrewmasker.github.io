@@ -8,7 +8,24 @@ category: academic
 related_publications: false
 ---
 
-Note: This project is unfinished due to my medical leave of absence from the University of Pennsylvania. The code is on GitHub <a href="https://github.com/AndrewMasker/KNODE_UW_ARM">here</a>, although it is also in an unfinished state. This page gives an overview of the problem and the mathematics behind the methods I compared, rather than a finished set of results.
+{% include project_summary_style.liquid %}
+
+<div class="project-summary">
+<p><strong>What it is:</strong> A learned dynamics model for a robotic arm moving underwater. It is a knowledge-based neural ODE (KNODE) that keeps the known rigid-body physics of a 7-joint Franka Emika Panda and adds a neural network that learns the torques from the surrounding water.</p>
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/academic/uw_arm_knode/panda_comp_traj_2_end.png" title="Trajectory end point comparison" class="img-fluid rounded z-depth-1" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/projects/academic/uw_arm_knode/panda_comp_traj_2_top.png" title="Trajectory end point comparison, top view" class="img-fluid rounded z-depth-1" %}
+    </div>
+</div>
+<div class="caption">
+    The end of a simulated trajectory, from the side (left) and above (right). The KNODE prediction (green) nearly overlaps the ground truth (white), while Fourier-basis SINDy (orange), a Gaussian process (blue), and the nominal model without the fluid (red) drift away from it.
+</div>
+<p><strong>What I did:</strong> I built the hybrid model in JAX on top of MJX (differentiable MuJoCo) and trained it end to end through the ODE solver on a GPU with Equinox and Diffrax. I then compared it with Fourier-basis SINDy and Gaussian process models trained on the residual dynamics.</p>
+<p><strong>Links:</strong> <a href="https://github.com/AndrewMasker/KNODE_UW_ARM">Code</a></p>
+</div>
 
 ### Useful Skills Learned/Used
 
@@ -191,6 +208,8 @@ Training a KNODE works exactly like training a NODE, except that gradients now h
 
 ### Results
 
+This project stopped before it was finished, when I took a medical leave of absence from the University of Pennsylvania, so the results are limited to the simulated comparison below. Most of this page covers the problem and the mathematics behind the methods I compared.
+
 Fig. 1 shows a comparison of the end point of a trajectory for the ground truth, KNODE, Fourier basis SINDy, a GP, and the nominal model. In this synthetic case, the ground truth dynamics include MuJoCo's fluid model, while the nominal model includes just the arm dynamics. To keep the comparison fair, the two traditional techniques are trained only on the residual between the ground truth and nominal dynamics. The nominal model, which neglects the fluid entirely, drifts the furthest from the ground truth, and the SINDy and GP models land somewhere in between. The KNODE prediction nearly overlaps the ground truth.
 
 <div class="row">
@@ -209,4 +228,4 @@ The natural next step, and the original motivation for the project, was to use t
 
 ### Implementation
 
-This project was implemented in <a href="https://github.com/jax-ml/jax">JAX</a>, using <a href="https://github.com/patrick-kidger/equinox">Equinox</a> and <a href="https://github.com/patrick-kidger/diffrax">Diffrax</a> as the neural network and differential equation libraries, respectively. The nominal model of the arm came from <a href="https://mujoco.org/">MuJoCo</a>, with MJX providing the differentiable implementation used during training.
+The code is on GitHub <a href="https://github.com/AndrewMasker/KNODE_UW_ARM">here</a>, although, like the project, it is unfinished. This project was implemented in <a href="https://github.com/jax-ml/jax">JAX</a>, using <a href="https://github.com/patrick-kidger/equinox">Equinox</a> and <a href="https://github.com/patrick-kidger/diffrax">Diffrax</a> as the neural network and differential equation libraries, respectively. The nominal model of the arm came from <a href="https://mujoco.org/">MuJoCo</a>, with MJX providing the differentiable implementation used during training.

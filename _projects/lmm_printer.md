@@ -21,8 +21,10 @@ related_publications: false
   }
 </style>
 
-Note: This project is a work in progress, and the printer has not produced a finished metal part yet. So far the results are the machine itself, a series of slurry tests, and some test runs of the printer. This page covers how the process works, how the machine is designed, and what I have learned along the way. I will keep updating it as the build moves forward. The code (Teensy firmware, Raspberry Pi software, and Pi setup scripts) is on GitHub <a href="https://github.com/AndrewMasker/metal-resin-printer">here</a>.
+{% include project_summary_style.liquid %}
 
+<div class="project-summary">
+<p><strong>What it is:</strong> A low-cost Lithography-based Metal Manufacturing (LMM) printer, which cures layers of a metal-powder slurry with a projector and then sinters the printed part into solid metal. It is a work in progress and has not produced a finished metal part yet.</p>
 <div class="row justify-content-sm-center">
     <div class="col-sm-8 mt-3 mt-md-0" style="flex: 0.562 1 0%;">
         {% include figure.liquid loading="eager" path="assets/img/projects/personal/lmm_printer/Printer_Hero.jpg" title="LMM printer prototype" class="img-fluid rounded z-depth-1" %}
@@ -32,8 +34,14 @@ Note: This project is a work in progress, and the printer has not produced a fin
     </div>
 </div>
 <div class="caption">
-    Fig. 1. The current prototype (left) and the full machine in Onshape (right).
+    The current prototype (left) and the full machine in Onshape (right).
 </div>
+<p><strong>Where it stands:</strong> The machine runs, with three-axis motion and homing, projector control, an on-machine GUI, and closed-loop slurry heating with hard safety cutoffs. Over seven slurry formulations, I got to a 45 vol% copper mix that flows well with little separation. Printing the first multi-layer green parts is next.</p>
+<p><strong>What I did:</strong> The whole system, end to end: the machine design in Onshape, a KiCad carrier PCB (Teensy 4.0 and Raspberry Pi Zero W) that I assembled and brought up, the C++ firmware, the Python print stack and GUI, three slurry-heating designs, and the slurry formulations. The projector driver comes from the open-source openMLA project.</p>
+<p><strong>Links:</strong> <a href="https://github.com/AndrewMasker/metal-resin-printer">Code</a></p>
+</div>
+
+Note: This page covers how the process works, how the machine is designed, and what I have learned along the way. I will keep updating it as the build moves forward.
 
 ### Useful Skills Learned/Used
 
@@ -67,7 +75,7 @@ To become metal, the green part must be debound and then sintered. In the two-st
     </div>
 </div>
 <div class="caption">
-    Fig. 2. The LMM process (schematic, not to scale). Left: printing a green part, with numbers matching the layer steps above. Right: turning it into metal.
+    Fig. 1. The LMM process (schematic, not to scale). Left: printing a green part, with numbers matching the layer steps above. Right: turning it into metal.
 </div>
 
 ### Machine Design
@@ -87,7 +95,7 @@ I designed the machine in Onshape with the goal of keeping it buildable in a sma
     </div>
 </div>
 <div class="caption">
-    Fig. 3. Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above.
+    Fig. 2. Section through the machine. The reservoir piston and build platform each ride on their own lead screw below the deck, with the recoater and projector above.
 </div>
 
 The build deck is a fixed aluminum plate with two rectangular openings, one for the reservoir and one for the build platform. I originally considered a removable top plate that could be swapped for one with smaller openings in order to waste less feedstock on small prints, but I ended up dropping it. It added quite a bit of complexity, and a similar idea may already be patented; that of course wouldn't have stopped a one-off build that isn't for sale, but it didn't really fit the spirit of the project. The reservoir is about 130 × 70 mm and shares one long wall with the build chamber, which became important later on when heating the slurry turned out to be the hardest problem on the machine (see [Heating the Slurry](#heating-the-slurry)).
@@ -101,7 +109,7 @@ The build deck is a fixed aluminum plate with two rectangular openings, one for 
     </div>
 </div>
 <div class="caption">
-    Fig. 4. The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD.
+    Fig. 3. The deck. Left: on the machine, with the reservoir piston in the left opening, the build platform in the middle, the recoater carriage at the left with its lead screw along the back, and the PTC heater and fan on the right. Right: the recoater carriage on its rails in CAD.
 </div>
 
 The reservoir piston and the build platform each move vertically inside their own opening. Originally, each one was guided by V-wheels pressed into the corners of its opening, which unfortunately proved unreliable in several ways. I replaced the wheels with a slightly oversized TPU fitting around each platform, which constrains its motion against the walls. In a future build, it may make sense to replace this with a machined PTFE fitting.
@@ -115,7 +123,7 @@ The reservoir piston and the build platform each move vertically inside their ow
     </div>
 </div>
 <div class="caption">
-    Fig. 5. Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them.
+    Fig. 4. Platform guidance, in section. Left: the original V-wheels in the corners of the openings. Right: the TPU fittings that replaced them.
 </div>
 
 The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560 × 1440 pixels). I chose DLP over an LCD mask because an LCD has to sit essentially in contact with the material, which would likely prove difficult with a paste. There is also the issue of green part strength being very low, which may result in breaking due to suction between the LCD and the slurry. On the other hand, a projector works from a distance and keeps the optics clear of the heat, which is quite desirable for this build. I measured the Mars 4 DLP and worked out the mounting geometry (throw distance, projector position, and focus) in CAD from those measurements.
@@ -126,7 +134,7 @@ The print engine is the DLP light engine from an Elegoo Mars 4 DLP printer (2560
     </div>
 </div>
 <div class="caption">
-    Fig. 6. The projector mount above the deck. The pink lines trace the light path through the glass window in the top plate onto the build platform.
+    Fig. 5. The projector mount above the deck. The pink lines trace the light path through the glass window in the top plate onto the build platform.
 </div>
 
 ### Electronics
@@ -146,7 +154,7 @@ I first built the electronics on breadboards with off-the-shelf modules (the Tee
     </div>
 </div>
 <div class="caption">
-    Fig. 7. The breadboard prototype. Left: stepper drivers and motor control. Right: the Raspberry Pi breakout and thermistor circuits.
+    Fig. 6. The breadboard prototype. Left: stepper drivers and motor control. Right: the Raspberry Pi breakout and thermistor circuits.
 </div>
 
 Once the prototype worked, I designed a carrier PCB in KiCad and had it made by JLCPCB. The PCB holds everything the breadboards did, but in a form that is less of a nest of jumper wires.
@@ -160,7 +168,7 @@ Once the prototype worked, I designed a carrier PCB in KiCad and had it made by 
     </div>
 </div>
 <div class="caption">
-    Fig. 8. On top of the machine. Left: the breadboard prototype. Right: the custom PCB that replaced it, with the Pi, the GUI screen, and the rotary encoder.
+    Fig. 7. On top of the machine. Left: the breadboard prototype. Right: the custom PCB that replaced it, with the Pi, the GUI screen, and the rotary encoder.
 </div>
 
 <div class="row">
@@ -169,7 +177,7 @@ Once the prototype worked, I designed a carrier PCB in KiCad and had it made by 
     </div>
 </div>
 <div class="caption">
-    Fig. 9. The board schematic in KiCad.
+    Fig. 8. The board schematic in KiCad.
 </div>
 
 <div class="row justify-content-sm-center">
@@ -181,7 +189,7 @@ Once the prototype worked, I designed a carrier PCB in KiCad and had it made by 
     </div>
 </div>
 <div class="caption">
-    Fig. 10. The PCB in KiCad. Left: the layout. Right: the 3D view.
+    Fig. 9. The PCB in KiCad. Left: the layout. Right: the 3D view.
 </div>
 
 The PCB carries:
@@ -204,7 +212,7 @@ Bringing up the board actually taught me quite a lot about soldering and trouble
     </div>
 </div>
 <div class="caption">
-    Fig. 11. Left: the bare board from JLCPCB. Right: assembled, with the Teensy, Pi, and stepper drivers in place.
+    Fig. 10. Left: the bare board from JLCPCB. Right: assembled, with the Teensy, Pi, and stepper drivers in place.
 </div>
 
 #### Firmware and Software
@@ -231,7 +239,7 @@ The projector is driven over SPI using code from the open-source <a href="https:
     </div>
 </div>
 <div class="caption">
-    Fig. 12. The on-machine GUI on the 240 × 240 screen: the main menu, with the status and log panel below it.
+    Fig. 11. The on-machine GUI on the 240 × 240 screen: the main menu, with the status and log panel below it.
 </div>
 
 ### The Slurry
@@ -264,7 +272,7 @@ The first three formulas mapped out the basic trade-off with off-the-shelf print
     </div>
 </div>
 <div class="caption">
-    Fig. 13. The current slurry. Left: at room temperature it is a spreadable solid like slightly softened butter. Right: warmed, it spreads into a smooth layer.
+    Fig. 12. The current slurry. Left: at room temperature it is a spreadable solid like slightly softened butter. Right: warmed, it spreads into a smooth layer.
 </div>
 
 #### Powder Loading
@@ -279,7 +287,7 @@ The dispersant dose is also worth revisiting. In these formulas, stearic acid wo
     </div>
 </div>
 <div class="caption">
-    Fig. 14. An early spread test after lowering the copper loading.
+    Fig. 13. An early spread test after lowering the copper loading.
 </div>
 
 ### Heating the Slurry
@@ -294,7 +302,7 @@ The slurry is solid at room temperature, so heat is what makes it printable, but
     </div>
 </div>
 <div class="caption">
-    Fig. 15. Version 1: the air thermistor, in a finned housing on the underside of the top plate next to the projector window. The PTC heater and fan are on the right of the deck photo above.
+    Fig. 14. Version 1: the air thermistor, in a finned housing on the underside of the top plate next to the projector window. The PTC heater and fan are on the right of the deck photo above.
 </div>
 
 **Version 2: measure the slurry, heat the reservoir walls.** Version 2 fixed what the loop measures and where the heat goes:
@@ -313,7 +321,7 @@ The slurry is solid at room temperature, so heat is what makes it printable, but
     </div>
 </div>
 <div class="caption">
-    Fig. 16. Version 2: the IR thermometer. Left: on the underside of the top plate next to the projector window, looking down at the slurry. Right: close-up of its housing.
+    Fig. 15. Version 2: the IR thermometer. Left: on the underside of the top plate next to the projector window, looking down at the slurry. Right: close-up of its housing.
 </div>
 
 Version 2 got the control strategy right, but not the power. Because the reservoir shares a wall with the build chamber, only three of its walls can be heated. Some rough heat-conduction estimates of warm-up time (across wall temperatures, reservoir sizes, slurry melting points, and three-wall versus four-wall heating) matched what the machine showed; the polyimide pads simply did not have enough power.
@@ -329,7 +337,7 @@ Version 2 got the control strategy right, but not the power. Because the reservo
     </div>
 </div>
 <div class="caption">
-    Fig. 17. Version 3: cartridge heaters in fittings machined from shaft supports and JB-Welded to the reservoir. Left: the front wall. Right: a side wall, with the safety thermistor.
+    Fig. 16. Version 3: cartridge heaters in fittings machined from shaft supports and JB-Welded to the reservoir. Left: the front wall. Right: a side wall, with the safety thermistor.
 </div>
 
 <div class="row">
@@ -338,7 +346,7 @@ Version 2 got the control strategy right, but not the power. Because the reservo
     </div>
 </div>
 <div class="caption">
-    Fig. 18. The solid-state relay and mains inlet that switch the cartridge heaters from wall power.
+    Fig. 17. The solid-state relay and mains inlet that switch the cartridge heaters from wall power.
 </div>
 
 This version works, and the cartridge heaters keep the slurry molten throughout printing. In fact, it worked a little too well; on one test run the slurry got runny enough to drain out through a previously unused screw hole in the reservoir, so that hole is now filled with JB Weld.
@@ -360,7 +368,7 @@ Parts are packed in activated carbon inside an alumina crucible, where the carbo
     </div>
 </div>
 <div class="caption">
-    Fig. 19. Left: the converted VEVOR kiln. Right: the Auber ramp/soak controller that replaced the stock one.
+    Fig. 18. Left: the converted VEVOR kiln. Right: the Auber ramp/soak controller that replaced the stock one.
 </div>
 
 Further out, I plan to build a dedicated 1,500 °C furnace with a cast alumina muffle, silicon carbide heating elements, SCR power control, a type S or B thermocouple, an argon purge at slight positive pressure, and an oxygen-depletion monitor. A 1,500 °C limit covers steel, copper, bronze, and tungsten carbide (WC-Co), and carbide is the most interesting target of those since it is hard to make in complex shapes any other way. Carbon burial works for copper, bronze, and plain steel, but not for carbide, so the argon atmosphere stays in the long-term design.
