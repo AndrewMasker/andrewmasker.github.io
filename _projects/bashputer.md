@@ -102,7 +102,7 @@ related_publications: false
     Snake, which I wrote in Bassm, running on the Bashputer.
 </div>
 <p><strong>What I did:</strong> I designed the architecture and its 66-instruction set, with every hardware component running as its own Bash process and talking through named pipes. I wrote the assembler, with macros, scoped labels, and compile-time arithmetic, and got the machine running in the browser by building a WebVM image that works around system calls the emulator doesn't support.</p>
-<p><strong>Links:</strong> <a href="https://github.com/AndrewMasker/Bashputer">Code</a> · <a href="https://andrewmasker.github.io/webvm/">Run it in your browser</a> (slow; read <a href="#try-it-online">Try It Online</a> first) · <a href="https://github.com/AndrewMasker/Bashputer/blob/master/docs/assembly-language.md">Assembly language guide</a></p>
+<p><strong>Links:</strong> <a href="https://github.com/AndrewMasker/Bashputer">Code</a> · <a href="/webvm/">Run it in your browser</a> (slow; read <a href="#try-it-online">Try It Online</a> first) · <a href="https://github.com/AndrewMasker/Bashputer/blob/master/docs/assembly-language.md">Assembly language guide</a></p>
 </div>
 
 ### Useful Skills Learned/Used
@@ -580,7 +580,7 @@ The repo also includes a Fibonacci printer that I wrote, along with a few progra
 
 ### Try It Online
 
-You can play FastSnake in a browser-based VM <a href="https://andrewmasker.github.io/webvm/">here</a>. This is my fork of <a href="https://github.com/leaningtech/webvm">WebVM</a>, which runs a Debian image with Bashputer already cloned in, and boots straight into the game. It is very slow to start and run in the browser, so you have to be patient with the moves; each key press takes effect one or two frames after it is pressed. Use w, a, s, and d to move, and q to quit.
+You can play FastSnake in a browser-based VM <a href="/webvm/">here</a>. This is my fork of <a href="https://github.com/leaningtech/webvm">WebVM</a>, which runs a Debian image with Bashputer already cloned in, and boots straight into the game. It is very slow to start and run in the browser, so you have to be patient with the moves; each key press takes effect one or two frames after it is pressed. Use w, a, s, and d to move, and q to quit.
 
 Once you quit, the console will eventually be returned to you in the Bashputer folder. If you are comfortable in a terminal, you can run other cartridges from there with `computer.sh`, for example:
 
