@@ -6,7 +6,7 @@ subtitle: andrewimasker@gmail.com · 717-251-0163
 
 profile:
   align: right
-  image: snowboard.jpg
+  image: profile_pic.jpg
   image_circular: false # crops the image to make it circular
 
 selected_papers: false # includes a list of papers marked as "selected={true}"
